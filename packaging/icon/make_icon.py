@@ -5,6 +5,7 @@ on a dark tile).
 Outputs, relative to the project root:
     resources/icons/svitlo.png    1024x1024, used as the window icon
     resources/icons/Svitlo.icns   macOS app bundle icon
+    resources/icons/svitlo.ico    Windows .exe icon
 
 Requires Pillow and numpy:  pip install pillow numpy
 Run from anywhere:          python3 packaging/icon/make_icon.py
@@ -145,8 +146,12 @@ def main():
     icon.save(png_path)
     # Pillow writes all standard ICNS sizes (16..1024) from the 1024 image.
     icon.save(icns_path, format="ICNS")
+    ico_path = os.path.join(OUT_DIR, "svitlo.ico")
+    icon.save(ico_path, format="ICO",
+              sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
     print("wrote", png_path)
     print("wrote", icns_path)
+    print("wrote", ico_path)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,0 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource prefix="/">
-        <file>icons/svitlo.png</file>
-        <file>support/qr-bitcoin.png</file>
-        <file>support/qr-kofi.png</file>
-        <file alias="LICENSE">../LICENSE</file>
-    </qresource>
-</RCC>

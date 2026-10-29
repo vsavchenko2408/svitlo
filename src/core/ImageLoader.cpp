@@ -3,6 +3,7 @@
 #include "core/ColorMath.h"
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
@@ -10,11 +11,13 @@
 #include <QtConcurrent/QtConcurrentMap>
 
 #include <array>
+#include <string>
 #include <memory>
 #include <numeric>
 
 #ifdef SVITLO_HAVE_LIBRAW
 #include <libraw/libraw.h>
+#include <algorithm>
 #endif
 
 namespace svitlo {
@@ -148,6 +151,18 @@ ImageBuffer ImageLoader::fromQImage(const QImage& input) {
 #ifdef SVITLO_HAVE_LIBRAW
 namespace {
 
+// Opens a file in LibRaw. On Windows the wide-character API is used so that
+// paths with non-ASCII characters (e.g. Cyrillic folder names) work.
+int openRawFile(LibRaw& proc, const QString& path) {
+#if defined(_WIN32) && defined(LIBRAW_WIN32_UNICODEPATHS)
+    const std::wstring wide = QDir::toNativeSeparators(path).toStdWString();
+    return proc.open_file(wide.c_str());
+#else
+    const QByteArray encoded = QFile::encodeName(path);
+    return proc.open_file(encoded.constData());
+#endif
+}
+
 ImageBuffer loadRaw(const QString& path, bool halfSize, QString* error, ImageInfo* info) {
     auto proc = std::make_unique<LibRaw>();
     auto& p = proc->imgdata.params;
@@ -160,8 +175,7 @@ ImageBuffer loadRaw(const QString& path, bool halfSize, QString* error, ImageInf
     p.half_size = halfSize ? 1 : 0;
     p.user_qual = halfSize ? 0 : 3; // bilinear for previews, AHD for full quality
 
-    const QByteArray encoded = QFile::encodeName(path);
-    int rc = proc->open_file(encoded.constData());
+    int rc = openRawFile(*proc, path);
     if (rc == LIBRAW_SUCCESS) rc = proc->unpack();
     if (rc == LIBRAW_SUCCESS) rc = proc->dcraw_process();
     if (rc != LIBRAW_SUCCESS) {
@@ -199,8 +213,7 @@ ImageBuffer loadRaw(const QString& path, bool halfSize, QString* error, ImageInf
 
 QImage loadRawThumbnail(const QString& path, ImageInfo* info) {
     auto proc = std::make_unique<LibRaw>();
-    const QByteArray encoded = QFile::encodeName(path);
-    if (proc->open_file(encoded.constData()) != LIBRAW_SUCCESS)
+    if (openRawFile(*proc, path) != LIBRAW_SUCCESS)
         return {};
 
     if (info) {

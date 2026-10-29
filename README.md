@@ -12,7 +12,7 @@
   <a href="https://github.com/vsavchenko2408/svitlo/actions/workflows/build.yml"><img src="https://github.com/vsavchenko2408/svitlo/actions/workflows/build.yml/badge.svg" alt="Build"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/vsavchenko2408/svitlo/releases/latest"><b>Download for macOS</b></a> ·
+  <a href="https://github.com/vsavchenko2408/svitlo/releases/latest"><b>Download for macOS &amp; Windows</b></a> ·
   <a href="README.uk.md">🇺🇦 Українською</a> ·
   <a href="https://ko-fi.com/dermeister">Support on Ko-fi</a>
 </p>
@@ -61,6 +61,14 @@
      ```
 
 **Requirements:** macOS 12 Monterey or later. The current build is for Intel Macs; on Apple Silicon it should run through Rosetta 2 (not tested yet).
+
+## Download and install (Windows)
+
+1. Download `Svitlo-…-windows-x64.zip` from [Releases](https://github.com/vsavchenko2408/svitlo/releases/latest).
+2. Unzip it anywhere (for example to `Documents\Svitlo`) and run **Svitlo.exe**. No installation is needed.
+3. Svitlo is not code-signed yet, so Windows SmartScreen may warn you on the first start: click **More info → Run anyway**.
+
+**Requirements:** 64-bit Windows 10 or 11.
 
 ## Keyboard shortcuts
 
@@ -115,6 +123,16 @@ cmake --build build -j
 ./build/Svitlo
 ```
 
+### Windows
+
+You need Visual Studio 2022 (with *Desktop development with C++*), CMake and Qt 6.8 for MSVC 2022 64-bit. LibRaw is downloaded and built automatically.
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH=C:\Qt\6.8.3\msvc2022_64
+cmake --build build --config Release
+packaging\make-windows-zip.ps1 -Exe build\Release\Svitlo.exe -QtDir C:\Qt\6.8.3\msvc2022_64
+```
+
 ## Architecture
 
 ```
@@ -154,7 +172,7 @@ python3 translations/fill_translations.py          # fill them from the table in
 - Lens correction (lensfun) and noise reduction
 - Full-resolution 100% view, EXIF copying on export
 - Presets, virtual copies, collections
-- Linux and Windows releases, Apple Silicon build
+- Linux packages, Apple Silicon build, Windows installer
 
 ## Support
 

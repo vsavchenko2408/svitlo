@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QStandardPaths>
 #include <QVBoxLayout>
+#include <algorithm>
 
 namespace svitlo {
 

@@ -1,6 +1,6 @@
 # Svitlo
 
-[🇬🇧 English](README.md) · [Завантажити для macOS](https://github.com/vsavchenko2408/svitlo/releases/latest) · [Підтримати на Ko-fi](https://ko-fi.com/dermeister)
+[🇬🇧 English](README.md) · [Завантажити для macOS і Windows](https://github.com/vsavchenko2408/svitlo/releases/latest) · [Підтримати на Ko-fi](https://ko-fi.com/dermeister)
 
 ![Svitlo — режим обробки](docs/screenshots/develop.png)
 
@@ -22,6 +22,14 @@
      ```
 
 **Вимоги:** macOS 12 Monterey або новіша. Поточна збірка — для Mac з процесорами Intel; на Apple Silicon має працювати через Rosetta 2 (ще не перевірено).
+
+## Завантаження та запуск (Windows)
+
+1. Завантаж `Svitlo-…-windows-x64.zip` з [Releases](https://github.com/vsavchenko2408/svitlo/releases/latest).
+2. Розпакуй будь-куди (наприклад, у `Documents\Svitlo`) і запусти **Svitlo.exe**. Встановлювати нічого не треба.
+3. Програма поки не підписана, тож Windows SmartScreen може попередити при першому запуску: натисни **Детальніше → Усе одно запустити** (англ. **More info → Run anyway**).
+
+**Вимоги:** 64-бітна Windows 10 або 11.
 
 ---
 
@@ -112,6 +120,18 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j
 
 ---
 
+## Збірка на Windows
+
+Потрібні Visual Studio 2022 (компонент *Desktop development with C++*), CMake і Qt 6.8 для MSVC 2022 64-bit. LibRaw завантажиться й збереться автоматично.
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH=C:\Qt\6.8.3\msvc2022_64
+cmake --build build --config Release
+packaging\make-windows-zip.ps1 -Exe build\Release\Svitlo.exe -QtDir C:\Qt\6.8.3\msvc2022_64
+```
+
+---
+
 ## Мови інтерфейсу
 
 English (основна), українська, данська, німецька, польська. За замовчуванням програма бере мову системи; змінити можна в меню **View → Language** (діє після перезапуску). Російської мови немає і не буде.
@@ -154,7 +174,7 @@ tests/        тести ядра (без дисплея)
 - Корекція об'єктивів (lensfun), шумозаглушення
 - 100 % з повної роздільності, копіювання EXIF при експорті
 - Пресети, віртуальні копії, колекції
-- Порти: Linux (вже збирається), Windows
+- Пакети для Linux, збірка для Apple Silicon, інсталятор для Windows
 
 ## Підтримка
 

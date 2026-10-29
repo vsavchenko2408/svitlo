@@ -11,6 +11,7 @@
 #include <QSqlQuery>
 #include <QUuid>
 #include <QVariant>
+#include <algorithm>
 
 namespace svitlo {
 

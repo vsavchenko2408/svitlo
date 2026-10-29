@@ -28,17 +28,29 @@ list(FILTER _libraw_sources EXCLUDE REGEX "_ph\\.cpp$")
 add_library(svitlo_libraw STATIC ${_libraw_sources})
 target_include_directories(svitlo_libraw SYSTEM PUBLIC "${libraw_src_SOURCE_DIR}")
 # LIBRAW_NODLL: static linking (only matters on Windows).
-target_compile_definitions(svitlo_libraw PUBLIC LIBRAW_NODLL PRIVATE USE_ZLIB)
+target_compile_definitions(svitlo_libraw PUBLIC LIBRAW_NODLL)
+if(WIN32)
+    # LibRaw's public headers include <winsock2.h> (and so <windows.h>).
+    # NOMINMAX stops windows.h from defining min/max macros that would break
+    # std::min/std::max in our code.
+    target_compile_definitions(svitlo_libraw PUBLIC NOMINMAX PRIVATE _CRT_SECURE_NO_WARNINGS)
+    target_link_libraries(svitlo_libraw PUBLIC ws2_32)
+endif()
 set_target_properties(svitlo_libraw PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # LibRaw is third-party code; don't drown the build log in its warnings.
 if(MSVC)
-    target_compile_options(svitlo_libraw PRIVATE /w)
+    target_compile_options(svitlo_libraw PRIVATE /w /bigobj)
 else()
     target_compile_options(svitlo_libraw PRIVATE -w)
 endif()
 
-find_package(ZLIB REQUIRED)
-target_link_libraries(svitlo_libraw PRIVATE ZLIB::ZLIB)
+# zlib (floating-point DNG support) comes with macOS and Linux; on Windows it
+# is usually absent, and LibRaw simply builds without that feature.
+find_package(ZLIB QUIET)
+if(ZLIB_FOUND)
+    target_compile_definitions(svitlo_libraw PRIVATE USE_ZLIB)
+    target_link_libraries(svitlo_libraw PRIVATE ZLIB::ZLIB)
+endif()
 
 message(STATUS "Svitlo: building bundled LibRaw ${SVITLO_LIBRAW_TAG} (static)")

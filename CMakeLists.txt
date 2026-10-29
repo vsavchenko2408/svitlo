@@ -12,7 +12,7 @@ endif()
 project(Svitlo VERSION 0.1.0 LANGUAGES CXX)
 
 # Svitlo — a free, open-source photo library and non-destructive photo editor.
-# Target: macOS 12 Monterey first (Qt 6.5 LTS), Linux and Windows later.
+# Targets: macOS 12+ (Qt 6.5), Linux, Windows 10+.
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,6 +21,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+if(MSVC)
+    # Sources are UTF-8 (Ukrainian text, symbols like "…" and "⟲").
+    add_compile_options(/utf-8)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
@@ -28,10 +33,10 @@ endif()
 option(SVITLO_WITH_LIBRAW "Enable RAW support via LibRaw" ON)
 option(SVITLO_BUILD_TESTS "Build the core tests" ON)
 
-# On macOS LibRaw is downloaded and built together with the app by default,
-# so no Homebrew is needed and the app runs on older macOS versions too.
-# On Linux the system package (libraw-dev) is used by default.
-if(APPLE)
+# On macOS and Windows LibRaw is downloaded and built together with the app
+# by default: no Homebrew/vcpkg needed, and on macOS the app runs on older
+# versions too. On Linux the system package (libraw-dev) is used by default.
+if(APPLE OR WIN32)
     set(_bundled_default ON)
 else()
     set(_bundled_default OFF)
@@ -140,8 +145,16 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_BINARY_DIR
 list(APPEND APP_LICENSE_FILES "${CMAKE_CURRENT_BINARY_DIR}/licenses/Svitlo-LICENSE.txt")
 set_source_files_properties(${APP_LICENSE_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/licenses")
 
-add_executable(Svitlo MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP_ICON_MACOS}
-               ${APP_LICENSE_FILES})
+# Windows: .exe icon and version information (resources/windows/svitlo.rc.in).
+set(APP_WINDOWS_RC "")
+if(WIN32)
+    set(APP_WINDOWS_RC "${CMAKE_CURRENT_BINARY_DIR}/svitlo.rc")
+    set(SVITLO_ICO "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/svitlo.ico")
+    configure_file(resources/windows/svitlo.rc.in "${APP_WINDOWS_RC}" @ONLY)
+endif()
+
+add_executable(Svitlo WIN32 MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP_ICON_MACOS}
+               ${APP_LICENSE_FILES} ${APP_WINDOWS_RC})
 target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql)
 target_compile_definitions(Svitlo PRIVATE SVITLO_VERSION="${PROJECT_VERSION}")
 

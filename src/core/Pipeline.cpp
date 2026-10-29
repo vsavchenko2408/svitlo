@@ -10,6 +10,7 @@
 #include <cmath>
 #include <numeric>
 #include <vector>
+#include <memory>
 
 namespace svitlo {
 

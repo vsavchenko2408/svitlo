@@ -5,6 +5,7 @@
 
 #include <QPainter>
 #include <QPainterPath>
+#include <algorithm>
 
 namespace svitlo {
 

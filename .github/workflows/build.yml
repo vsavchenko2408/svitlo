@@ -1,7 +1,8 @@
 # Builds and tests Svitlo on every push and pull request.
-#  - Linux:  build + core tests (system Qt and LibRaw from Ubuntu)
-#  - macOS:  build + core tests + Svitlo.dmg (Qt 6.5.3, bundled LibRaw, runs on macOS 12+)
-# When a tag like v0.2.0 is pushed, the .dmg is also attached to that GitHub Release.
+#  - Linux:   build + core tests (system Qt and LibRaw from Ubuntu)
+#  - macOS:   build + core tests + Svitlo.dmg (Qt 6.5.3, bundled LibRaw, runs on macOS 12+)
+#  - Windows: build + core tests + portable ZIP (Qt 6.8.3, MSVC 2022, bundled LibRaw)
+# When a tag like v0.2.0 is pushed, the .dmg and the .zip are attached to that GitHub Release.
 
 name: Build
 
@@ -44,8 +45,6 @@ jobs:
     name: macOS (Intel, Qt 6.5.3)
     # Intel image: the .dmg is built for x86_64 Macs like the ones Svitlo targets.
     runs-on: macos-15-intel
-    permissions:
-      contents: write   # needed only to attach the .dmg to a release
     steps:
       - uses: actions/checkout@v6
 
@@ -83,12 +82,64 @@ jobs:
           path: dist/*.dmg
           if-no-files-found: error
 
-      - name: Attach .dmg to GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+  windows:
+    name: Windows (Qt 6.8.3, MSVC 2022)
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt 6.8.3
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          cache: true
+
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: |
+          $env:PATH = "$env:QT_ROOT_DIR\bin;$env:PATH"
+          ctest --test-dir build -C Release --output-on-failure
+
+      - name: Create portable ZIP
+        run: packaging/make-windows-zip.ps1 -Exe build/Release/Svitlo.exe -QtDir "$env:QT_ROOT_DIR"
+
+      - name: Upload ZIP as build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Svitlo-Windows
+          path: dist/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Attach to GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [linux, macos, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v6
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create or update the release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          ls -la artifacts
           # Create the release if it doesn't exist yet (notes from docs/ if present).
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             NOTES="docs/RELEASE_NOTES_${TAG}.md"
@@ -98,4 +149,4 @@ jobs:
               gh release create "$TAG" --title "Svitlo ${TAG#v}" --generate-notes
             fi
           fi
-          gh release upload "$TAG" dist/*.dmg --clobber
+          gh release upload "$TAG" artifacts/*.dmg artifacts/*.zip --clobber

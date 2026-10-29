@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QPointer>
 #include <QRunnable>
+#include <algorithm>
 
 namespace svitlo {
 
