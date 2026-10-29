@@ -5,6 +5,8 @@
 #include "core/Exporter.h"
 #include "ui/DevelopView.h"
 #include "ui/ExportDialog.h"
+#include "ui/LicensesDialog.h"
+#include "ui/SupportDialog.h"
 #include "ui/LibraryView.h"
 #include "ui/PhotoModel.h"
 
@@ -162,6 +164,11 @@ void MainWindow::buildMenus() {
     add(view, tr("Previous Photo"), QKeySequence(Qt::Key_Left), [this] { if (inDevelop()) m_develop->step(-1); });
 
     QMenu* help = menuBar()->addMenu(tr("&Help"));
+    add(help, tr("Support Svitlo…"), QKeySequence(), [this] {
+        SupportDialog(SupportDialog::Mode::Manual, this).exec();
+    });
+    add(help, tr("Licenses…"), QKeySequence(), [this] { LicensesDialog(this).exec(); });
+    help->addSeparator();
     add(help, tr("About Svitlo"), QKeySequence(), [this] {
         QMessageBox::about(this, tr("About Svitlo"),
                            tr("<h3>Svitlo %1</h3>"

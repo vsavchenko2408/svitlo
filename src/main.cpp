@@ -1,10 +1,12 @@
 #include "catalog/Catalog.h"
 #include "catalog/ThumbnailCache.h"
 #include "ui/MainWindow.h"
+#include "ui/SupportDialog.h"
 #include "ui/Theme.h"
 
 #include <QApplication>
 #include <QDir>
+#include <QIcon>
 #include <QMessageBox>
 #include <QStandardPaths>
 
@@ -14,6 +16,7 @@ int main(int argc, char* argv[]) {
     QApplication::setApplicationName("Svitlo");
     QApplication::setApplicationVersion(SVITLO_VERSION);
 
+    QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/svitlo.png")));
     svitlo::theme::apply(app);
 
     // macOS: ~/Library/Application Support/Svitlo/Svitlo and ~/Library/Caches/Svitlo/Svitlo
@@ -30,5 +33,6 @@ int main(int argc, char* argv[]) {
 
     svitlo::MainWindow window(&catalog, &thumbs);
     window.show();
+    svitlo::SupportDialog::maybeShowOnStartup(&window);
     return app.exec();
 }

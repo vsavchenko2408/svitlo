@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
@@ -110,15 +111,41 @@ set(APP_SOURCES
     src/ui/ToneCurveWidget.h         src/ui/ToneCurveWidget.cpp
     src/ui/HistogramWidget.h         src/ui/HistogramWidget.cpp
     src/ui/ExportDialog.h            src/ui/ExportDialog.cpp
+    src/ui/SupportDialog.h           src/ui/SupportDialog.cpp
+    src/ui/LicensesDialog.h          src/ui/LicensesDialog.cpp
 )
 
-add_executable(Svitlo MACOSX_BUNDLE ${APP_SOURCES})
+# App icon: Svitlo.icns goes into the bundle's Resources folder (Finder/Dock),
+# svitlo.png is compiled in via Qt resources (window icon on Linux/Windows).
+# Regenerate both with: python3 packaging/icon/make_icon.py
+set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/Svitlo.icns")
+set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+# Licence texts of the bundled LibRaw go into Svitlo.app/Contents/Resources/licenses.
+set(APP_LICENSE_FILES "")
+if(TARGET svitlo_libraw)
+    foreach(_lic LICENSE.CDDL LICENSE.LGPL COPYRIGHT)
+        set(_src "${libraw_src_SOURCE_DIR}/${_lic}")
+        if(EXISTS "${_src}")
+            set(_dst "${CMAKE_CURRENT_BINARY_DIR}/licenses/LibRaw-${_lic}.txt")
+            configure_file("${_src}" "${_dst}" COPYONLY)
+            list(APPEND APP_LICENSE_FILES "${_dst}")
+        endif()
+    endforeach()
+endif()
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_BINARY_DIR}/licenses/Svitlo-LICENSE.txt" COPYONLY)
+list(APPEND APP_LICENSE_FILES "${CMAKE_CURRENT_BINARY_DIR}/licenses/Svitlo-LICENSE.txt")
+set_source_files_properties(${APP_LICENSE_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/licenses")
+
+add_executable(Svitlo MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP_ICON_MACOS}
+               ${APP_LICENSE_FILES})
 target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql)
 target_compile_definitions(Svitlo PRIVATE SVITLO_VERSION="${PROJECT_VERSION}")
 
 set_target_properties(Svitlo PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.svitlo"
     MACOSX_BUNDLE_BUNDLE_NAME "Svitlo"
+    MACOSX_BUNDLE_ICON_FILE "Svitlo.icns"
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
 )
