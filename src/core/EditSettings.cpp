@@ -44,6 +44,7 @@ bool EditSettings::operator==(const EditSettings& o) const {
            nearlyEqual(sharpenAmount, o.sharpenAmount) &&
            nearlyEqual(sharpenRadius, o.sharpenRadius) && nearlyEqual(vignette, o.vignette) &&
            nearlyEqual(vignetteMidpoint, o.vignetteMidpoint) && monochrome == o.monochrome &&
+           rawProfile == o.rawProfile &&
            nearlyEqual(rotation, o.rotation) && crop == o.crop &&
            orientationQuarterTurns == o.orientationQuarterTurns;
 }
@@ -73,6 +74,7 @@ QJsonObject EditSettings::toJson() const {
     o["vignette"] = vignette;
     o["vignetteMidpoint"] = vignetteMidpoint;
     o["monochrome"] = monochrome;
+    o["rawProfile"] = rawProfile;
     o["rotation"] = rotation;
     o["crop"] = QJsonArray{crop.x(), crop.y(), crop.width(), crop.height()};
     o["orientation"] = orientationQuarterTurns;
@@ -113,6 +115,7 @@ EditSettings EditSettings::fromJson(const QJsonObject& o) {
     s.vignette = clampField(o, "vignette", 0, -100, 100);
     s.vignetteMidpoint = clampField(o, "vignetteMidpoint", 50, 0, 100);
     s.monochrome = o.value("monochrome").toBool(false);
+    s.rawProfile = std::clamp(o.value("rawProfile").toInt(0), 0, 1);
     s.rotation = clampField(o, "rotation", 0, -45, 45);
 
     const QJsonArray c = o.value("crop").toArray();

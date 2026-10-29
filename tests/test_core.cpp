@@ -175,6 +175,40 @@ static void testExport() {
     CHECK(second != written);
 }
 
+
+static void testRawBaseLook() {
+    // Left half dark grey, right half light grey.
+    QImage greys(64, 8, QImage::Format_RGB888);
+    for (int y = 0; y < 8; ++y)
+        for (int x = 0; x < 64; ++x)
+            greys.setPixel(x, y, x < 32 ? qRgb(40, 40, 40) : qRgb(180, 180, 180));
+    const ImageBuffer buf = ImageLoader::fromQImage(greys);
+    Pipeline::Options raw;
+    raw.isRaw = true;
+    EditSettings standard;               // rawProfile = 0
+    EditSettings neutral;
+    neutral.rawProfile = 1;
+
+    const QImage plain = Pipeline::render(buf, EditSettings{});
+    const QImage std_ = Pipeline::render(buf, standard, raw);
+    const QImage neu = Pipeline::render(buf, neutral, raw);
+
+    // Neutral RAW == no base look at all.
+    CHECK(maxAbsDiff(plain, neu) <= 1);
+    // Standard adds contrast: shadows darker, upper mids brighter.
+    CHECK(qGray(std_.pixel(10, 4)) < qGray(plain.pixel(10, 4)));
+    CHECK(qGray(std_.pixel(50, 4)) > qGray(plain.pixel(50, 4)));
+    // The base look must keep tones in order.
+    float prev = -1.0f;
+    for (int i = 0; i <= 200; ++i) {
+        const float v = Pipeline::toneValue(EditSettings{}, 2.0f * i / 200.0f, true);
+        CHECK(v >= prev - 1e-4f);
+        prev = v;
+    }
+    // And it is saved with the edit.
+    CHECK(EditSettings::fromJsonString(neutral.toJsonString()).rawProfile == 1);
+}
+
 int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
     testIdentityRoundTrip();
@@ -186,6 +220,7 @@ int main(int argc, char** argv) {
     testSettingsJson();
     testHistogram();
     testExport();
+    testRawBaseLook();
     if (g_failures) {
         std::fprintf(stderr, "%d check(s) failed\n", g_failures);
         return EXIT_FAILURE;

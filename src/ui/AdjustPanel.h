@@ -26,6 +26,8 @@ public:
 
     void setHistogram(const Histogram& h);
     void setInfoCaption(const QString& text);
+    // The RAW profile selector is shown only for RAW files.
+    void setRawControlsVisible(bool visible);
 
     // Aspect choice: 0 = free, -1 = original, otherwise long/short ratio.
     double aspectChoice() const;
@@ -48,6 +50,8 @@ private:
     HistogramWidget* m_histogram = nullptr;
     QCheckBox* m_mono = nullptr;
     QComboBox* m_aspect = nullptr;
+    QComboBox* m_profile = nullptr;
+    QWidget* m_profileRow = nullptr;
 };
 
 } // namespace svitlo

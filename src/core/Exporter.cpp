@@ -48,6 +48,7 @@ bool Exporter::exportPhoto(const QString& sourcePath, const EditSettings& settin
 
     Pipeline::Options popt;
     popt.resolutionScale = scale;
+    popt.isRaw = ImageLoader::isRawFile(sourcePath);
     const QImage out = Pipeline::render(working, settings, popt);
     if (out.isNull()) {
         if (error) *error = QObject::tr("Processing failed");

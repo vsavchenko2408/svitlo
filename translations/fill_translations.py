@@ -349,6 +349,19 @@ T = {
                             pl="Przypomnij później"),
     "Close": dict(uk="Закрити", da="Luk", de="Schließen", pl="Zamknij"),
     "Copied ✓": dict(uk="Скопійовано ✓", da="Kopieret ✓", de="Kopiert ✓", pl="Skopiowano ✓"),
+    # --- RAW profile (0.3) -----------------------------------------------------------
+    "Rotate left 90°": dict(uk="Повернути ліворуч на 90°", da="Rotér 90° til venstre",
+                            de="Um 90° nach links drehen", pl="Obróć o 90° w lewo"),
+    "Rotate right 90°": dict(uk="Повернути праворуч на 90°", da="Rotér 90° til højre",
+                             de="Um 90° nach rechts drehen", pl="Obróć o 90° w prawo"),
+    "Profile": dict(uk="Профіль", da="Profil", de="Profil", pl="Profil"),
+    "Standard": dict(uk="Стандартний", da="Standard", de="Standard", pl="Standardowy"),
+    "Neutral": dict(uk="Нейтральний", da="Neutral", de="Neutral", pl="Neutralny"),
+    "Base look for RAW files. Standard adds gentle contrast and colour like a camera JPEG; Neutral is flat and linear.": dict(
+        uk="Базовий вигляд RAW-файлів. «Стандартний» додає м'який контраст і колір, як JPEG із камери; «Нейтральний» — пласкіший і лінійний.",
+        da="Grundudseende for RAW-filer. Standard giver blid kontrast og farve som en JPEG fra kameraet; Neutral er fladt og lineært.",
+        de="Grundlook für RAW-Dateien. „Standard“ fügt sanften Kontrast und Farbe wie bei einem Kamera-JPEG hinzu; „Neutral“ ist flach und linear.",
+        pl="Podstawowy wygląd plików RAW. „Standardowy” dodaje łagodny kontrast i kolor jak JPEG z aparatu; „Neutralny” jest płaski i liniowy."),
 }
 
 PLURAL_FORMS = {"uk": 3, "pl": 3, "da": 2, "de": 2}

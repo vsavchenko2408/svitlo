@@ -70,6 +70,7 @@ private:
     void onPreviewLoaded();
     void setSettingsLive(const EditSettings& s);
     void requestRender();
+    QImage renderBefore() const;
     void onRenderFinished();
     void commit();
     void applyHistoryEntry();

@@ -75,15 +75,31 @@ float toneFunction(const EditSettings& s, const ToneCurve* curve, float x) {
     return std::max(0.0f, x);
 }
 
+// RAW "Standard" base look: a gentle S-curve on perceptual lightness, a
+// little like a camera's own JPEG rendering. Linear RAW data looks flat and
+// dull without it. Identity above 1.0, so highlight headroom is kept.
+const ToneCurve& rawBaseCurve() {
+    static const ToneCurve curve({QPointF(0.0, 0.0), QPointF(0.10, 0.07), QPointF(0.40, 0.44),
+                                  QPointF(0.75, 0.82), QPointF(1.0, 1.0)});
+    return curve;
+}
+constexpr float kRawBaseSaturation = 1.10f;
+
+inline float applyRawBase(float x) {
+    return x < 1.0f ? float(rawBaseCurve().evaluate(std::max(0.0f, x))) : x;
+}
+
 struct ToneLut {
     std::vector<float> table;
 
-    ToneLut(const EditSettings& s) : table(kToneLutSize) {
+    ToneLut(const EditSettings& s, bool rawBaseLook) : table(kToneLutSize) {
         std::unique_ptr<ToneCurve> curve;
         if (!s.curveIsIdentity())
             curve = std::make_unique<ToneCurve>(s.curve);
         for (int i = 0; i < kToneLutSize; ++i) {
-            const float x = kMaxL * float(i) / float(kToneLutSize - 1);
+            float x = kMaxL * float(i) / float(kToneLutSize - 1);
+            if (rawBaseLook)
+                x = applyRawBase(x);
             table[i] = toneFunction(s, curve.get(), x);
         }
     }
@@ -164,11 +180,11 @@ std::vector<float> gaussianish(const std::vector<float>& plane, int w, int h, fl
 
 } // namespace
 
-float Pipeline::toneValue(const EditSettings& s, float lightness) {
+float Pipeline::toneValue(const EditSettings& s, float lightness, bool rawBaseLook) {
     std::unique_ptr<ToneCurve> curve;
     if (!s.curveIsIdentity())
         curve = std::make_unique<ToneCurve>(s.curve);
-    return toneFunction(s, curve.get(), lightness);
+    return toneFunction(s, curve.get(), rawBaseLook ? applyRawBase(lightness) : lightness);
 }
 
 QImage Pipeline::render(const ImageBuffer& source, const EditSettings& s, const Options& opt) {
@@ -217,9 +233,10 @@ QImage Pipeline::render(const ImageBuffer& source, const EditSettings& s, const 
     }
 
     // 4–7. Tone, colour, vignette, soft clip; writes sRGB-encoded floats.
-    const ToneLut tone(s);
+    const bool rawBase = opt.isRaw && s.rawProfile == 0;
+    const ToneLut tone(s, rawBase);
     const float vib = float(s.vibrance / 100.0);
-    const float sat = 1.0f + float(s.saturation / 100.0);
+    const float sat = (1.0f + float(s.saturation / 100.0)) * (rawBase ? kRawBaseSaturation : 1.0f);
     const float vig = float(s.vignette / 100.0);
     const float vigStart = 0.15f + 0.9f * float(s.vignetteMidpoint / 100.0);
     const bool mono = s.monochrome;

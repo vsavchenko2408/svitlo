@@ -66,6 +66,7 @@ QImage ThumbnailCache::thumbnail(const PhotoRecord& rec) {
                 haveInfo = !buf.isNull();
                 if (!buf.isNull()) {
                     Pipeline::Options opt;
+                    opt.isRaw = ImageLoader::isRawFile(path);
                     opt.resolutionScale = info.size.isValid() && info.size.width() > 0
                                               ? double(std::max(buf.width, buf.height)) /
                                                     std::max(info.size.width(), info.size.height())

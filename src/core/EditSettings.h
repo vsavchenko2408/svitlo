@@ -46,6 +46,11 @@ struct EditSettings {
     // Treatment
     bool monochrome = false;
 
+    // Base look for RAW files (ignored for JPEG/PNG/TIFF):
+    // 0 = Standard — gentle contrast and colour, close to a camera JPEG;
+    // 1 = Neutral  — flat, linear rendering for maximum latitude.
+    int rawProfile = 0;
+
     // Geometry. Rotation (degrees) is applied about the image centre first,
     // then the crop rectangle is taken in the rotated frame, normalised to
     // [0,1] in both axes.

@@ -3,12 +3,12 @@
 <context>
     <name>ImageLoader</name>
     <message>
-        <location filename="../src/core/ImageLoader.cpp" line="+175" />
+        <location filename="../src/core/ImageLoader.cpp" line="+189" />
         <source>Unsupported RAW output layout</source>
         <translation>Непідтримуваний формат даних RAW</translation>
     </message>
     <message>
-        <location line="+72" />
+        <location line="+71" />
         <source>This build has no RAW support (LibRaw missing)</source>
         <translation>Ця збірка не підтримує RAW (немає LibRaw)</translation>
     </message>
@@ -21,7 +21,7 @@
         <translation>Не вдалося прочитати %1: %2</translation>
     </message>
     <message>
-        <location line="+27" />
+        <location line="+28" />
         <source>Processing failed</source>
         <translation>Помилка обробки</translation>
     </message>
@@ -41,7 +41,7 @@
 <context>
     <name>svitlo::AdjustPanel</name>
     <message>
-        <location filename="../src/ui/AdjustPanel.cpp" line="+40" />
+        <location filename="../src/ui/AdjustPanel.cpp" line="+41" />
         <source>Light &amp; Colour</source>
         <translation>Світло і колір</translation>
     </message>
@@ -56,7 +56,27 @@
         <translation>Налаштувати експозицію, контраст, білі й чорні за гістограмою</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+6" />
+        <source>Profile</source>
+        <translation>Профіль</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Standard</source>
+        <translation>Стандартний</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Neutral</source>
+        <translation>Нейтральний</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Base look for RAW files. Standard adds gentle contrast and colour like a camera JPEG; Neutral is flat and linear.</source>
+        <translation>Базовий вигляд RAW-файлів. «Стандартний» додає м'який контраст і колір, як JPEG із камери; «Нейтральний» — пласкіший і лінійний.</translation>
+    </message>
+    <message>
+        <location line="+17" />
         <source>Temperature</source>
         <translation>Температура</translation>
     </message>
@@ -151,19 +171,19 @@
         <translation>Оригінальні</translation>
     </message>
     <message>
-        <location line="+11" />
+        <location line="+14" />
         <source>Straighten</source>
         <translation>Вирівнювання</translation>
     </message>
     <message>
-        <location line="+3" />
-        <source>⟲ 90°</source>
-        <translation>⟲ 90°</translation>
+        <location line="+6" />
+        <source>Rotate left 90°</source>
+        <translation>Повернути ліворуч на 90°</translation>
     </message>
     <message>
         <location line="+1" />
-        <source>⟳ 90°</source>
-        <translation>⟳ 90°</translation>
+        <source>Rotate right 90°</source>
+        <translation>Повернути праворуч на 90°</translation>
     </message>
     <message>
         <location line="+1" />
@@ -294,7 +314,7 @@
         <translation>Експорт (⇧⌘E)</translation>
     </message>
     <message>
-        <location line="+134" />
+        <location line="+137" />
         <source>Loading %1…</source>
         <translation>Завантаження %1…</translation>
     </message>
@@ -309,7 +329,7 @@
 <context>
     <name>svitlo::ExportDialog</name>
     <message>
-        <location filename="../src/ui/ExportDialog.cpp" line="+20" />
+        <location filename="../src/ui/ExportDialog.cpp" line="+21" />
         <location line="+41" />
         <source>Export</source>
         <translation>Експорт</translation>

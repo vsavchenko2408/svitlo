@@ -12,7 +12,11 @@ CollapsibleSection::CollapsibleSection(const QString& title, bool expanded, QWid
     m_header->setText(title.toUpper().replace('&', QStringLiteral("&&")));
     m_header->setCheckable(true);
     m_header->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    m_header->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    // Ignored: a long (translated) title must not widen the whole panel and
+    // push the slider value fields out of view; at worst the title is clipped.
+    m_header->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    m_header->setMinimumWidth(0);
+    m_header->setToolTip(title);
     m_header->setStyleSheet(
         "QToolButton { color: #8D9095; font-weight: 600; letter-spacing: 1px; text-align: left;"
         " border: none; border-top: 1px solid #3A3C40; border-radius: 0; padding: 8px 2px; }"

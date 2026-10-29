@@ -33,6 +33,7 @@
 
 **Develop**
 - RAW files via LibRaw (NEF, CR2, CR3, ARW, RAF, ORF, RW2, DNG and many more) plus JPEG, PNG and TIFF
+- RAW profiles: *Standard* (gentle contrast and colour, close to a camera JPEG) or *Neutral* (flat, linear)
 - White balance (temperature, tint), exposure, contrast, highlights, shadows, whites, blacks
 - Clarity, vibrance, saturation, black & white
 - Tone curve with smooth, monotone interpolation

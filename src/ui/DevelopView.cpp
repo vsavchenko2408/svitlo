@@ -99,6 +99,7 @@ DevelopView::DevelopView(Catalog* catalog, ThumbnailCache* thumbs, PhotoModel* m
 
     connect(m_panel, &AdjustPanel::settingsChanged, this, [this](const EditSettings& s) {
         const bool rotationChanged = s.rotation != m_settings.rotation;
+        const bool profileChanged = s.rawProfile != m_settings.rawProfile;
         EditSettings next = s;
         // The panel does not own the crop rectangle; keep ours.
         next.crop = m_settings.crop;
@@ -106,6 +107,8 @@ DevelopView::DevelopView(Catalog* catalog, ThumbnailCache* thumbs, PhotoModel* m
         m_settings = next;
         if (rotationChanged)
             refitCrop();
+        if (profileChanged)
+            m_canvas->setBeforeImage(renderBefore());
         requestRender();
         m_commitTimer.start();
     });
@@ -228,7 +231,9 @@ void DevelopView::onPreviewLoaded() {
     if (m_info.size.isValid())
         m_catalog->updateInfo(m_record.id, m_info);
 
-    QString caption = m_record.fileName;
+    const bool isRaw = ImageLoader::isRawFile(m_record.path);
+    m_panel->setRawControlsVisible(isRaw);
+    QString caption = isRaw ? QStringLiteral("RAW  ·  ") + m_record.fileName : m_record.fileName;
     if (m_info.size.isValid())
         caption += QStringLiteral("  ·  %1 × %2").arg(m_info.size.width()).arg(m_info.size.height());
     if (!m_info.camera.trimmed().isEmpty())
@@ -236,10 +241,21 @@ void DevelopView::onPreviewLoaded() {
     m_panel->setInfoCaption(caption);
 
     // "Before" = the photo as decoded, without any adjustments or crop.
+    m_canvas->setBeforeImage(renderBefore());
+    requestRender();
+}
+
+// "Before" = the photo as decoded, without the user's adjustments or crop,
+// but with its orientation and (for RAW) the chosen base look.
+QImage DevelopView::renderBefore() const {
+    if (!m_preview)
+        return {};
     EditSettings original;
     original.orientationQuarterTurns = m_settings.orientationQuarterTurns;
-    m_canvas->setBeforeImage(Pipeline::render(*m_preview, original));
-    requestRender();
+    original.rawProfile = m_settings.rawProfile;
+    Pipeline::Options opt;
+    opt.isRaw = ImageLoader::isRawFile(m_record.path);
+    return Pipeline::render(*m_preview, original, opt);
 }
 
 // --- Rendering ------------------------------------------------------------------------
@@ -270,6 +286,7 @@ void DevelopView::requestRender() {
     const bool cropMode = m_cropMode;
     Pipeline::Options opt;
     opt.applyCrop = !cropMode;
+    opt.isRaw = ImageLoader::isRawFile(m_record.path);
     opt.resolutionScale = resolutionScale();
 
     m_renderWatcher.setFuture(QtConcurrent::run([preview, settings, opt, cropMode] {
@@ -414,9 +431,7 @@ void DevelopView::rotate(int delta) {
     if (m_cropMode)
         m_canvas->setCropRect(m_settings.crop);
     if (m_preview) {
-        EditSettings original;
-        original.orientationQuarterTurns = m_settings.orientationQuarterTurns;
-        m_canvas->setBeforeImage(Pipeline::render(*m_preview, original));
+        m_canvas->setBeforeImage(renderBefore());
     }
     requestRender();
     commit();

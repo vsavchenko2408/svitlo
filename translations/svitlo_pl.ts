@@ -3,12 +3,12 @@
 <context>
     <name>ImageLoader</name>
     <message>
-        <location filename="../src/core/ImageLoader.cpp" line="+175" />
+        <location filename="../src/core/ImageLoader.cpp" line="+189" />
         <source>Unsupported RAW output layout</source>
         <translation>Nieobsługiwany format danych RAW</translation>
     </message>
     <message>
-        <location line="+72" />
+        <location line="+71" />
         <source>This build has no RAW support (LibRaw missing)</source>
         <translation>Ta wersja nie obsługuje RAW (brak LibRaw)</translation>
     </message>
@@ -21,7 +21,7 @@
         <translation>Nie można odczytać %1: %2</translation>
     </message>
     <message>
-        <location line="+27" />
+        <location line="+28" />
         <source>Processing failed</source>
         <translation>Przetwarzanie nie powiodło się</translation>
     </message>
@@ -41,7 +41,7 @@
 <context>
     <name>svitlo::AdjustPanel</name>
     <message>
-        <location filename="../src/ui/AdjustPanel.cpp" line="+40" />
+        <location filename="../src/ui/AdjustPanel.cpp" line="+41" />
         <source>Light &amp; Colour</source>
         <translation>Światło i kolor</translation>
     </message>
@@ -56,7 +56,27 @@
         <translation>Ustaw ekspozycję, kontrast, biele i czernie na podstawie histogramu</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+6" />
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Standard</source>
+        <translation>Standardowy</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Neutral</source>
+        <translation>Neutralny</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Base look for RAW files. Standard adds gentle contrast and colour like a camera JPEG; Neutral is flat and linear.</source>
+        <translation>Podstawowy wygląd plików RAW. „Standardowy” dodaje łagodny kontrast i kolor jak JPEG z aparatu; „Neutralny” jest płaski i liniowy.</translation>
+    </message>
+    <message>
+        <location line="+17" />
         <source>Temperature</source>
         <translation>Temperatura</translation>
     </message>
@@ -151,19 +171,19 @@
         <translation>Oryginalne</translation>
     </message>
     <message>
-        <location line="+11" />
+        <location line="+14" />
         <source>Straighten</source>
         <translation>Prostowanie</translation>
     </message>
     <message>
-        <location line="+3" />
-        <source>⟲ 90°</source>
-        <translation>⟲ 90°</translation>
+        <location line="+6" />
+        <source>Rotate left 90°</source>
+        <translation>Obróć o 90° w lewo</translation>
     </message>
     <message>
         <location line="+1" />
-        <source>⟳ 90°</source>
-        <translation>⟳ 90°</translation>
+        <source>Rotate right 90°</source>
+        <translation>Obróć o 90° w prawo</translation>
     </message>
     <message>
         <location line="+1" />
@@ -294,7 +314,7 @@
         <translation>Eksportuj (⇧⌘E)</translation>
     </message>
     <message>
-        <location line="+134" />
+        <location line="+137" />
         <source>Loading %1…</source>
         <translation>Wczytywanie %1…</translation>
     </message>
@@ -309,7 +329,7 @@
 <context>
     <name>svitlo::ExportDialog</name>
     <message>
-        <location filename="../src/ui/ExportDialog.cpp" line="+20" />
+        <location filename="../src/ui/ExportDialog.cpp" line="+21" />
         <location line="+41" />
         <source>Export</source>
         <translation>Eksportuj</translation>

@@ -6,6 +6,7 @@
 #include "ui/ToneCurveWidget.h"
 
 #include <QCheckBox>
+#include <algorithm>
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -43,6 +44,29 @@ AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     auto* autoButton = new QPushButton(tr("Auto tone"));
     autoButton->setToolTip(tr("Set exposure, contrast, whites and blacks from the histogram"));
     connect(autoButton, &QPushButton::clicked, this, &AdjustPanel::autoToneRequested);
+    // RAW base look (see EditSettings::rawProfile).
+    m_profileRow = new QWidget;
+    auto* profileLayout = new QHBoxLayout(m_profileRow);
+    profileLayout->setContentsMargins(0, 2, 0, 6);
+    profileLayout->addWidget(new QLabel(tr("Profile")));
+    m_profile = new QComboBox;
+    m_profile->addItem(tr("Standard"));
+    m_profile->addItem(tr("Neutral"));
+    m_profile->setToolTip(tr("Base look for RAW files. Standard adds gentle contrast and colour "
+                             "like a camera JPEG; Neutral is flat and linear."));
+    // Let the combo shrink with the panel instead of widening it (which
+    // would push the slider value fields out of view).
+    m_profile->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    m_profile->setMinimumContentsLength(6);
+    m_profile->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    profileLayout->addWidget(m_profile, 1);
+    b->addWidget(m_profileRow);
+    connect(m_profile, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](int index) {
+        m_settings.rawProfile = index;
+        emit settingsChanged(m_settings);
+        emit editingFinished();
+    });
+
     b->addWidget(autoButton);
 
     auto* temp = addSlider(b, tr("Temperature"), -100, 100, 0, 0, &EditSettings::temperature);
@@ -106,6 +130,9 @@ AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     m_aspect->addItem("4 : 3", 4.0 / 3.0);
     m_aspect->addItem("3 : 2", 3.0 / 2.0);
     m_aspect->addItem("16 : 9", 16.0 / 9.0);
+    m_aspect->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    m_aspect->setMinimumContentsLength(6);
+    m_aspect->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     aspectRow->addWidget(m_aspect, 1);
     c->addLayout(aspectRow);
     connect(m_aspect, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -114,8 +141,11 @@ AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     addSlider(c, tr("Straighten"), -45, 45, 0, 1, &EditSettings::rotation);
 
     auto* rotRow = new QHBoxLayout;
-    auto* rotL = new QPushButton(tr("⟲ 90°"));
-    auto* rotR = new QPushButton(tr("⟳ 90°"));
+    // Symbol-only buttons keep the row narrow in every language.
+    auto* rotL = new QPushButton(QStringLiteral("⟲"));
+    auto* rotR = new QPushButton(QStringLiteral("⟳"));
+    rotL->setToolTip(tr("Rotate left 90°"));
+    rotR->setToolTip(tr("Rotate right 90°"));
     auto* resetCrop = new QPushButton(tr("Reset"));
     rotRow->addWidget(rotL);
     rotRow->addWidget(rotR);
@@ -161,6 +191,8 @@ void AdjustPanel::setSettings(const EditSettings& s) {
     m_curve->setPoints(s.curve);
     const QSignalBlocker block(m_mono);
     m_mono->setChecked(s.monochrome);
+    const QSignalBlocker blockProfile(m_profile);
+    m_profile->setCurrentIndex(std::clamp(s.rawProfile, 0, 1));
 }
 
 void AdjustPanel::setHistogram(const Histogram& h) {
@@ -169,6 +201,8 @@ void AdjustPanel::setHistogram(const Histogram& h) {
 }
 
 void AdjustPanel::setInfoCaption(const QString& text) { m_histogram->setCaption(text); }
+
+void AdjustPanel::setRawControlsVisible(bool visible) { m_profileRow->setVisible(visible); }
 
 double AdjustPanel::aspectChoice() const { return m_aspect->currentData().toDouble(); }
 
