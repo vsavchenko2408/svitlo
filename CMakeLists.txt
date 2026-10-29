@@ -38,6 +38,11 @@ endif()
 option(SVITLO_BUNDLED_LIBRAW "Download and build LibRaw instead of using an installed one"
        ${_bundled_default})
 
+# Avoid "framework 'AGL' not found" with older Qt and new Xcode SDKs.
+if(APPLE)
+    list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macos-agl-fix")
+endif()
+
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Concurrent)
 
 # ---------------------------------------------------------------- LibRaw ----
