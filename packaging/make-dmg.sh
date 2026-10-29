@@ -52,7 +52,18 @@ codesign --verify --deep --strict "$APP"
 
 echo "==> Creating the disk image"
 ln -s /Applications "$STAGE/Applications"
-hdiutil create -volname "Svitlo" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+# hdiutil sometimes fails with "Resource busy" (common on CI machines): retry a few times.
+for attempt in 1 2 3 4 5; do
+    if hdiutil create -volname "Svitlo" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null; then
+        break
+    fi
+    if [[ $attempt == 5 ]]; then
+        echo "hdiutil failed" >&2
+        exit 1
+    fi
+    echo "hdiutil failed, retrying ($attempt)…" >&2
+    sleep 5
+done
 rm -rf "$STAGE"
 
 echo

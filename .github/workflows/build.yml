@@ -1,0 +1,101 @@
+# Builds and tests Svitlo on every push and pull request.
+#  - Linux:  build + core tests (system Qt and LibRaw from Ubuntu)
+#  - macOS:  build + core tests + Svitlo.dmg (Qt 6.5.3, bundled LibRaw, runs on macOS 12+)
+# When a tag like v0.2.0 is pushed, the .dmg is also attached to that GitHub Release.
+
+name: Build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux (Ubuntu 24.04)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake g++ pkg-config libgl1-mesa-dev \
+            qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-translations-l10n \
+            libqt6sql6-sqlite libraw-dev
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  macos:
+    name: macOS (Intel, Qt 6.5.3)
+    # Intel image: the .dmg is built for x86_64 Macs like the ones Svitlo targets.
+    runs-on: macos-15-intel
+    permissions:
+      contents: write   # needed only to attach the .dmg to a release
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt 6.5.3
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.5.3'
+          cache: true
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR" \
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0
+
+      - name: Build
+        run: cmake --build build -j "$(sysctl -n hw.ncpu)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Check minimum macOS version
+        run: |
+          otool -l build/Svitlo.app/Contents/MacOS/Svitlo | grep -A3 LC_BUILD_VERSION | grep minos
+
+      - name: Create .dmg
+        run: |
+          chmod +x packaging/make-dmg.sh
+          packaging/make-dmg.sh build/Svitlo.app "$QT_ROOT_DIR"
+
+      - name: Upload .dmg as build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Svitlo-macOS
+          path: dist/*.dmg
+          if-no-files-found: error
+
+      - name: Attach .dmg to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Create the release if it doesn't exist yet (notes from docs/ if present).
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            NOTES="docs/RELEASE_NOTES_${TAG}.md"
+            if [ -f "$NOTES" ]; then
+              gh release create "$TAG" --title "Svitlo ${TAG#v}" --notes-file "$NOTES"
+            else
+              gh release create "$TAG" --title "Svitlo ${TAG#v}" --generate-notes
+            fi
+          fi
+          gh release upload "$TAG" dist/*.dmg --clobber
