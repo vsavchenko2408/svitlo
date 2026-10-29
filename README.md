@@ -8,7 +8,9 @@
   A free, open-source photo library and non-destructive RAW editor.<br>
   Written in C++17 with Qt 6.
 </p>
-
+<p align="center">
+  <a href="https://github.com/vsavchenko2408/svitlo/actions/workflows/build.yml"><img src="https://github.com/vsavchenko2408/svitlo/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+</p>
 <p align="center">
   <a href="https://github.com/vsavchenko2408/svitlo/releases/latest"><b>Download for macOS</b></a> ·
   <a href="README.uk.md">🇺🇦 Українською</a> ·
