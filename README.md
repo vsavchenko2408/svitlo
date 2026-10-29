@@ -174,6 +174,17 @@ python3 translations/fill_translations.py          # fill them from the table in
 - Presets, virtual copies, collections
 - Linux packages, Apple Silicon build, Windows installer
 
+## How this project was made
+
+I want to be upfront about this: **most of Svitlo's code was written by an AI assistant (Claude by Anthropic)**, working from my requirements.
+
+My part so far:
+- the idea, the requirements and the decisions: what to build, which platforms and languages to support, what to change;
+- building and testing on real hardware: several Intel Macs (Monterey, Sonoma, Sequoia), Windows, and my own RAW files;
+- finding and reporting bugs, fixing build problems, setting up the releases and the CI pipeline, and publishing the project.
+
+I'm a self-taught C++ developer, and I use Svitlo to learn: reading and understanding the code, and writing new features myself. From here on, the commit history should show more and more of my own work.
+
 ## Support
 
 Svitlo is free and made in my spare time. If you find it useful, you can support its development on [Ko-fi](https://ko-fi.com/dermeister) or with Bitcoin (address in **Help → Support Svitlo**). Bug reports and ideas are very welcome in [Issues](https://github.com/vsavchenko2408/svitlo/issues).
