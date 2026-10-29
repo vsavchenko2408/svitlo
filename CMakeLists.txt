@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.21)
 
+# Oldest macOS the app should run on. Must be set before project().
+# Without it clang targets the macOS version of the build machine, so an app
+# built on Sequoia would refuse to start on Sonoma or Monterey.
+# Note: Qt itself also has a minimum (Qt 6.5 → macOS 11, Qt 6.12 → macOS 14.4);
+# the app runs only where both are satisfied.
+if(CMAKE_HOST_APPLE AND NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version")
+endif()
+
 project(Svitlo VERSION 0.1.0 LANGUAGES CXX)
 
 # Svitlo — a free, open-source photo library and non-destructive photo editor.
@@ -18,11 +27,26 @@ endif()
 option(SVITLO_WITH_LIBRAW "Enable RAW support via LibRaw" ON)
 option(SVITLO_BUILD_TESTS "Build the core tests" ON)
 
+# On macOS LibRaw is downloaded and built together with the app by default,
+# so no Homebrew is needed and the app runs on older macOS versions too.
+# On Linux the system package (libraw-dev) is used by default.
+if(APPLE)
+    set(_bundled_default ON)
+else()
+    set(_bundled_default OFF)
+endif()
+option(SVITLO_BUNDLED_LIBRAW "Download and build LibRaw instead of using an installed one"
+       ${_bundled_default})
+
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Concurrent)
 
 # ---------------------------------------------------------------- LibRaw ----
 set(SVITLO_HAVE_LIBRAW OFF)
-if(SVITLO_WITH_LIBRAW)
+if(SVITLO_WITH_LIBRAW AND SVITLO_BUNDLED_LIBRAW)
+    include(cmake/BundledLibRaw.cmake)
+    set(SVITLO_HAVE_LIBRAW ON)
+    set(SVITLO_LIBRAW_TARGET svitlo_libraw)
+elseif(SVITLO_WITH_LIBRAW)
     find_package(PkgConfig QUIET)
     if(PkgConfig_FOUND)
         # libraw_r is the thread-safe flavour; we decode on worker threads.
@@ -33,6 +57,7 @@ if(SVITLO_WITH_LIBRAW)
     endif()
     if(LIBRAW_FOUND)
         set(SVITLO_HAVE_LIBRAW ON)
+        set(SVITLO_LIBRAW_TARGET PkgConfig::LIBRAW)
         message(STATUS "Svitlo: RAW support enabled (LibRaw ${LIBRAW_VERSION})")
     else()
         message(WARNING "Svitlo: LibRaw not found — building without RAW support "
@@ -58,7 +83,7 @@ target_include_directories(svitlo_core PUBLIC src)
 target_link_libraries(svitlo_core PUBLIC Qt6::Core Qt6::Gui Qt6::Concurrent)
 if(SVITLO_HAVE_LIBRAW)
     target_compile_definitions(svitlo_core PUBLIC SVITLO_HAVE_LIBRAW=1)
-    target_link_libraries(svitlo_core PRIVATE PkgConfig::LIBRAW)
+    target_link_libraries(svitlo_core PRIVATE ${SVITLO_LIBRAW_TARGET})
 endif()
 
 # ------------------------------------------------------------------ app -----

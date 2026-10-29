@@ -62,27 +62,23 @@ xcode-select --install
 Чому саме 6.5: офіційно Qt 6.5 підтримує ціль macOS 11 і новіше та збирається з Xcode 13 і новіше. Для Qt 6.8 потрібен Xcode 15 (macOS 14 SDK), тож на Monterey 6.5 — надійніший вибір.
 
 ### 3. LibRaw (для RAW)
-```bash
-brew install libraw pkg-config cmake
-```
-На Monterey Homebrew працює без офіційної підтримки (Tier 3), тому пакети можуть збиратися з вихідного коду довше звичайного. Альтернатива — MacPorts: `sudo port install libraw pkgconfig`.
+Нічого встановлювати не треба. На macOS CMake сам завантажує LibRaw з GitHub і збирає її разом із програмою (статично), з тією ж мінімальною версією macOS. Перша збірка через це триває на кілька хвилин довше, і потрібен інтернет.
 
-Без LibRaw програма теж збереться, але відкриватиме лише JPEG/PNG/TIFF.
+Мінімальна версія macOS задається змінною `CMAKE_OSX_DEPLOYMENT_TARGET` (за замовчуванням `12.0`). Програма запуститься там, де виконуються обидві умови: ця змінна і мінімум самого Qt (Qt 6.5 → macOS 11, Qt 6.12 → macOS 14.4). Для Monterey збирай з Qt 6.5.
 
 ### 4. Збірка
 ```bash
 cd svitlo
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$HOME/Qt/6.5.x/macos
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$HOME/Qt/6.5.3/macos
 cmake --build build -j
 open build/Svitlo.app
 ```
-(замість `6.5.x` підстав версію, яку встановив інсталятор.)
 
 Тести ядра: `cd build && ctest --output-on-failure`
 
 ### 5. Готовий .app / .dmg для інших комп'ютерів
 ```bash
-~/Qt/6.5.x/macos/bin/macdeployqt build/Svitlo.app -dmg
+packaging/make-dmg.sh build/Svitlo.app ~/Qt/6.5.3/macos
 ```
 Застосунок не підписаний, тому перший запуск — правий клік → «Відкрити».
 
@@ -129,4 +125,4 @@ tests/        тести ядра (без дисплея)
 - Порти: Linux (вже збирається), Windows
 
 ## Правове
-Svitlo — незалежний проєкт. Код написаний з нуля і поширюється під ліцензією MIT. Проєкт не пов'язаний з Adobe та не використовує їхній код, назви, логотипи, іконки чи файли. Залежності: Qt 6 (LGPL v3) і LibRaw (LGPL 2.1 / CDDL 1.0) підключаються динамічно.
+Svitlo — незалежний проєкт. Код написаний з нуля і поширюється під ліцензією MIT. Проєкт не пов'язаний з Adobe та не використовує їхній код, назви, логотипи, іконки чи файли. Залежності: Qt 6 (LGPL v3) підключається динамічно. LibRaw (подвійна ліцензія LGPL 2.1 / CDDL 1.0) на macOS збирається з незміненого офіційного вихідного коду й лінкується статично; на Linux береться системний пакет.
