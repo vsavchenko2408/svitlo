@@ -49,7 +49,7 @@ if(APPLE)
     list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macos-agl-fix")
 endif()
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Concurrent)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Concurrent Network)
 # Optional: needed to compile the interface translations (.ts → .qm).
 find_package(Qt6 6.4 QUIET COMPONENTS LinguistTools)
 
@@ -91,6 +91,7 @@ add_library(svitlo_core STATIC
     src/core/Pipeline.h          src/core/Pipeline.cpp
     src/core/Histogram.h         src/core/Histogram.cpp
     src/core/Exporter.h          src/core/Exporter.cpp
+    src/core/UpdateInfo.h        src/core/UpdateInfo.cpp
 )
 target_include_directories(svitlo_core PUBLIC src)
 target_link_libraries(svitlo_core PUBLIC Qt6::Core Qt6::Gui Qt6::Concurrent)
@@ -119,6 +120,8 @@ set(APP_SOURCES
     src/ui/HistogramWidget.h         src/ui/HistogramWidget.cpp
     src/ui/ExportDialog.h            src/ui/ExportDialog.cpp
     src/ui/Language.h                src/ui/Language.cpp
+    src/ui/UpdateChecker.h           src/ui/UpdateChecker.cpp
+    src/ui/UpdateDialog.h            src/ui/UpdateDialog.cpp
     src/ui/SupportDialog.h           src/ui/SupportDialog.cpp
     src/ui/LicensesDialog.h          src/ui/LicensesDialog.cpp
 )
@@ -155,7 +158,7 @@ endif()
 
 add_executable(Svitlo WIN32 MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP_ICON_MACOS}
                ${APP_LICENSE_FILES} ${APP_WINDOWS_RC})
-target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql)
+target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql Qt6::Network)
 target_compile_definitions(Svitlo PRIVATE SVITLO_VERSION="${PROJECT_VERSION}")
 
 # ---------------------------------------------------------- translations ----

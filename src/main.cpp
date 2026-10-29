@@ -36,5 +36,6 @@ int main(int argc, char* argv[]) {
     svitlo::MainWindow window(&catalog, &thumbs);
     window.show();
     svitlo::SupportDialog::maybeShowOnStartup(&window);
+    window.startUpdateCheck();
     return app.exec();
 }

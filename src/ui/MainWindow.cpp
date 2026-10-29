@@ -7,6 +7,7 @@
 #include "ui/ExportDialog.h"
 #include "ui/LicensesDialog.h"
 #include "ui/SupportDialog.h"
+#include "ui/UpdateChecker.h"
 #include "ui/Language.h"
 #include "ui/LibraryView.h"
 #include "ui/PhotoModel.h"
@@ -43,6 +44,7 @@ MainWindow::MainWindow(Catalog* catalog, ThumbnailCache* thumbs, QWidget* parent
     setUnifiedTitleAndToolBarOnMac(true);
 
     m_model = new PhotoModel(m_catalog, m_thumbs, this);
+    m_updates = new UpdateChecker(this);
     m_library = new LibraryView(m_model);
     m_develop = new DevelopView(m_catalog, m_thumbs, m_model);
 
@@ -192,6 +194,14 @@ void MainWindow::buildMenus() {
     });
     add(help, tr("Licenses…"), QKeySequence(), [this] { LicensesDialog(this).exec(); });
     help->addSeparator();
+    add(help, tr("Check for Updates…"), QKeySequence(), [this] { m_updates->checkNow(); })
+        ->setMenuRole(QAction::NoRole);
+    QAction* autoCheck = help->addAction(tr("Check for Updates at Startup"));
+    autoCheck->setCheckable(true);
+    autoCheck->setChecked(UpdateChecker::checkAtStartupEnabled());
+    autoCheck->setMenuRole(QAction::NoRole);
+    connect(autoCheck, &QAction::toggled, this, [](bool on) { UpdateChecker::setCheckAtStartupEnabled(on); });
+    help->addSeparator();
     QAction* about = add(help, tr("About Svitlo"), QKeySequence(), [this] {
         QMessageBox::about(this, tr("About Svitlo"),
                            tr("<h3>Svitlo %1</h3>"
@@ -221,6 +231,8 @@ void MainWindow::changeLanguage(const QString& code) {
         close();
     }
 }
+
+void MainWindow::startUpdateCheck() { m_updates->checkOnStartup(); }
 
 bool MainWindow::inDevelop() const { return m_stack->currentWidget() == m_develop; }
 

@@ -522,7 +522,7 @@
 <context>
     <name>svitlo::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="+67" />
+        <location filename="../src/ui/MainWindow.cpp" line="+69" />
         <location line="+91" />
         <source>Library</source>
         <translation>Bibliothek</translation>
@@ -675,12 +675,12 @@
     </message>
     <message>
         <location line="+4" />
-        <location line="+40" />
+        <location line="+48" />
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location line="-29" />
+        <location line="-37" />
         <source>System Default</source>
         <translation>Systemstandard</translation>
     </message>
@@ -701,6 +701,16 @@
     </message>
     <message>
         <location line="+2" />
+        <source>Check for Updates…</source>
+        <translation>Nach Updates suchen…</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Check for Updates at Startup</source>
+        <translation>Beim Start nach Updates suchen</translation>
+    </message>
+    <message>
+        <location line="+6" />
         <location line="+1" />
         <source>About Svitlo</source>
         <translation>Über Svitlo</translation>
@@ -731,7 +741,7 @@
         <translation>Später</translation>
     </message>
     <message>
-        <location line="+18" />
+        <location line="+20" />
         <source>Import some photos first</source>
         <translation>Importieren Sie zuerst einige Fotos</translation>
     </message>
@@ -889,6 +899,105 @@ Andere hierher gesendete Coins gehen verloren.</translation>
         <location filename="../src/ui/ToneCurveWidget.cpp" line="+24" />
         <source>Click to add a point, drag to move, double-click a point to remove it</source>
         <translation>Klicken zum Hinzufügen eines Punkts, ziehen zum Verschieben, Doppelklick auf einen Punkt zum Entfernen</translation>
+    </message>
+</context>
+<context>
+    <name>svitlo::UpdateChecker</name>
+    <message>
+        <location filename="../src/ui/UpdateChecker.cpp" line="+64" />
+        <location line="+17" />
+        <source>Check for Updates</source>
+        <translation>Nach Updates suchen</translation>
+    </message>
+    <message>
+        <location line="-16" />
+        <source>Could not check for updates:
+%1</source>
+        <translation>Suche nach Updates fehlgeschlagen:
+%1</translation>
+    </message>
+    <message>
+        <location line="+17" />
+        <source>You have the latest version of Svitlo (%1).</source>
+        <translation>Sie haben die neueste Version von Svitlo (%1).</translation>
+    </message>
+</context>
+<context>
+    <name>svitlo::UpdateDialog</name>
+    <message>
+        <location filename="../src/ui/UpdateDialog.cpp" line="+25" />
+        <source>Update Available</source>
+        <translation>Update verfügbar</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>&lt;span style='font-size:17px; font-weight:600'&gt;Svitlo %1 is available&lt;/span&gt;</source>
+        <translation>&lt;span style='font-size:17px; font-weight:600'&gt;Svitlo %1 ist verfügbar&lt;/span&gt;</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>You have version %1.</source>
+        <translation>Sie haben Version %1.</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>No release notes.</source>
+        <translation>Keine Versionshinweise.</translation>
+    </message>
+    <message>
+        <location line="+8" />
+        <source>Skip This Version</source>
+        <translation>Diese Version überspringen</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Remind Me Later</source>
+        <translation>Später erinnern</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Open Release Page</source>
+        <translation>Release-Seite öffnen</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Download</source>
+        <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <location line="+48" />
+        <source>Cannot write to %1</source>
+        <translation>%1 kann nicht geschrieben werden</translation>
+    </message>
+    <message>
+        <location line="+8" />
+        <source>Downloading %1…</source>
+        <translation>%1 wird heruntergeladen…</translation>
+    </message>
+    <message>
+        <location line="+16" />
+        <source>Download failed: %1</source>
+        <translation>Download fehlgeschlagen: %1</translation>
+    </message>
+    <message>
+        <location line="+7" />
+        <source>Cannot save %1</source>
+        <translation>%1 kann nicht gespeichert werden</translation>
+    </message>
+    <message>
+        <location line="+12" />
+        <source>Downloaded. Quit Svitlo, then drag the new Svitlo from the opened disk image into Applications and replace the old one.</source>
+        <translation>Heruntergeladen. Beenden Sie Svitlo und ziehen Sie dann das neue Svitlo aus dem geöffneten Image in „Programme“, um das alte zu ersetzen.</translation>
+    </message>
+    <message>
+        <location line="+4" />
+        <source>Downloaded to %1. Quit Svitlo, unzip the file and replace your old Svitlo folder with the new one.</source>
+        <translation>Heruntergeladen nach %1. Beenden Sie Svitlo, entpacken Sie die Datei und ersetzen Sie den alten Svitlo-Ordner durch den neuen.</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>Quit Svitlo</source>
+        <translation>Svitlo beenden</translation>
     </message>
 </context>
 </TS>

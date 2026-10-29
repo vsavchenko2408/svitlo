@@ -14,11 +14,16 @@ class ThumbnailCache;
 class PhotoModel;
 class LibraryView;
 class DevelopView;
+class UpdateChecker;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(Catalog* catalog, ThumbnailCache* thumbs, QWidget* parent = nullptr);
+
+public:
+    // Starts the automatic update check (if enabled); call after show().
+    void startUpdateCheck();
 
 protected:
     void closeEvent(QCloseEvent* e) override;
@@ -47,6 +52,7 @@ private:
     QStackedWidget* m_stack;
     LibraryView* m_library;
     DevelopView* m_develop;
+    UpdateChecker* m_updates;
     QToolButton* m_libraryTab;
     QToolButton* m_developTab;
 

@@ -522,7 +522,7 @@
 <context>
     <name>svitlo::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="+67" />
+        <location filename="../src/ui/MainWindow.cpp" line="+69" />
         <location line="+91" />
         <source>Library</source>
         <translation>Bibliotek</translation>
@@ -675,12 +675,12 @@
     </message>
     <message>
         <location line="+4" />
-        <location line="+40" />
+        <location line="+48" />
         <source>Language</source>
         <translation>Sprog</translation>
     </message>
     <message>
-        <location line="-29" />
+        <location line="-37" />
         <source>System Default</source>
         <translation>Systemstandard</translation>
     </message>
@@ -701,6 +701,16 @@
     </message>
     <message>
         <location line="+2" />
+        <source>Check for Updates…</source>
+        <translation>Søg efter opdateringer…</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Check for Updates at Startup</source>
+        <translation>Søg efter opdateringer ved start</translation>
+    </message>
+    <message>
+        <location line="+6" />
         <location line="+1" />
         <source>About Svitlo</source>
         <translation>Om Svitlo</translation>
@@ -731,7 +741,7 @@
         <translation>Senere</translation>
     </message>
     <message>
-        <location line="+18" />
+        <location line="+20" />
         <source>Import some photos first</source>
         <translation>Importér først nogle fotos</translation>
     </message>
@@ -889,6 +899,105 @@ Andre mønter sendt hertil går tabt.</translation>
         <location filename="../src/ui/ToneCurveWidget.cpp" line="+24" />
         <source>Click to add a point, drag to move, double-click a point to remove it</source>
         <translation>Klik for at tilføje et punkt, træk for at flytte, dobbeltklik på et punkt for at fjerne det</translation>
+    </message>
+</context>
+<context>
+    <name>svitlo::UpdateChecker</name>
+    <message>
+        <location filename="../src/ui/UpdateChecker.cpp" line="+64" />
+        <location line="+17" />
+        <source>Check for Updates</source>
+        <translation>Søg efter opdateringer</translation>
+    </message>
+    <message>
+        <location line="-16" />
+        <source>Could not check for updates:
+%1</source>
+        <translation>Kunne ikke søge efter opdateringer:
+%1</translation>
+    </message>
+    <message>
+        <location line="+17" />
+        <source>You have the latest version of Svitlo (%1).</source>
+        <translation>Du har den nyeste version af Svitlo (%1).</translation>
+    </message>
+</context>
+<context>
+    <name>svitlo::UpdateDialog</name>
+    <message>
+        <location filename="../src/ui/UpdateDialog.cpp" line="+25" />
+        <source>Update Available</source>
+        <translation>Opdatering tilgængelig</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>&lt;span style='font-size:17px; font-weight:600'&gt;Svitlo %1 is available&lt;/span&gt;</source>
+        <translation>&lt;span style='font-size:17px; font-weight:600'&gt;Svitlo %1 er tilgængelig&lt;/span&gt;</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>You have version %1.</source>
+        <translation>Du har version %1.</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>No release notes.</source>
+        <translation>Ingen udgivelsesnoter.</translation>
+    </message>
+    <message>
+        <location line="+8" />
+        <source>Skip This Version</source>
+        <translation>Spring denne version over</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Remind Me Later</source>
+        <translation>Påmind mig senere</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Open Release Page</source>
+        <translation>Åbn udgivelsessiden</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Download</source>
+        <translation>Hent</translation>
+    </message>
+    <message>
+        <location line="+48" />
+        <source>Cannot write to %1</source>
+        <translation>Kan ikke skrive til %1</translation>
+    </message>
+    <message>
+        <location line="+8" />
+        <source>Downloading %1…</source>
+        <translation>Henter %1…</translation>
+    </message>
+    <message>
+        <location line="+16" />
+        <source>Download failed: %1</source>
+        <translation>Download mislykkedes: %1</translation>
+    </message>
+    <message>
+        <location line="+7" />
+        <source>Cannot save %1</source>
+        <translation>Kan ikke gemme %1</translation>
+    </message>
+    <message>
+        <location line="+12" />
+        <source>Downloaded. Quit Svitlo, then drag the new Svitlo from the opened disk image into Applications and replace the old one.</source>
+        <translation>Hentet. Afslut Svitlo, og træk derefter det nye Svitlo fra det åbnede diskbillede til Programmer, og erstat det gamle.</translation>
+    </message>
+    <message>
+        <location line="+4" />
+        <source>Downloaded to %1. Quit Svitlo, unzip the file and replace your old Svitlo folder with the new one.</source>
+        <translation>Hentet til %1. Afslut Svitlo, pak filen ud, og erstat din gamle Svitlo-mappe med den nye.</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>Quit Svitlo</source>
+        <translation>Afslut Svitlo</translation>
     </message>
 </context>
 </TS>

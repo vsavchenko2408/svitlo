@@ -8,6 +8,7 @@
 #include "core/ImageLoader.h"
 #include "core/Pipeline.h"
 #include "core/ToneCurve.h"
+#include "core/UpdateInfo.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -209,6 +210,34 @@ static void testRawBaseLook() {
     CHECK(EditSettings::fromJsonString(neutral.toJsonString()).rawProfile == 1);
 }
 
+
+static void testUpdateInfo() {
+    using namespace svitlo::update;
+    CHECK(normalizeVersion("v0.3.0") == "0.3.0");
+    CHECK(normalizeVersion("v.0.1.0") == "0.1.0");      // the very first tag was written like this
+    CHECK(isNewerVersion("v0.3.0", "0.2.0"));
+    CHECK(isNewerVersion("v0.10.0", "0.9.1"));          // numeric, not alphabetical
+    CHECK(!isNewerVersion("v0.2.0", "0.2.0"));
+    CHECK(!isNewerVersion("v0.1.0", "0.2.0"));
+    CHECK(!isNewerVersion("nonsense", "0.2.0"));
+
+    const QByteArray json = R"({
+        "tag_name": "v0.3.0", "html_url": "https://example.org/r", "body": "Notes",
+        "draft": false, "prerelease": false,
+        "assets": [
+            {"name": "Svitlo-0.3.0-x86_64.dmg", "browser_download_url": "https://example.org/a.dmg", "size": 100},
+            {"name": "Svitlo-0.3.0-windows-x64.zip", "browser_download_url": "https://example.org/a.zip", "size": 200}
+        ]})";
+    const ReleaseInfo mac = parseLatestRelease(json, ".dmg");
+    CHECK(mac.valid && mac.version == "0.3.0" && mac.assetUrl == "https://example.org/a.dmg");
+    const ReleaseInfo win = parseLatestRelease(json, "-windows-x64.zip");
+    CHECK(win.assetName == "Svitlo-0.3.0-windows-x64.zip" && win.assetSize == 200);
+    const ReleaseInfo linux_ = parseLatestRelease(json, QString());
+    CHECK(linux_.valid && linux_.assetUrl.isEmpty());
+    CHECK(!parseLatestRelease("not json", ".dmg").valid);
+    CHECK(!parseLatestRelease(R"({"tag_name":"v9.0.0","prerelease":true})", ".dmg").valid);
+}
+
 int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
     testIdentityRoundTrip();
@@ -221,6 +250,7 @@ int main(int argc, char** argv) {
     testHistogram();
     testExport();
     testRawBaseLook();
+    testUpdateInfo();
     if (g_failures) {
         std::fprintf(stderr, "%d check(s) failed\n", g_failures);
         return EXIT_FAILURE;

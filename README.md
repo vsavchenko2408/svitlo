@@ -48,6 +48,8 @@
 
 **Non-destructive by design.** Edits live in the catalog and in a small sidecar file next to each photo (`IMG_0001.NEF.svitlo.json`), so they travel with your pictures.
 
+**Updates:** Svitlo can check GitHub for new versions at startup (at most once a day) and download the right installer for you. This sends a single anonymous request to `api.github.com` and nothing else; you can turn it off in **Help → Check for Updates at Startup**.
+
 **Languages:** English, Ukrainian, Danish, German and Polish. Svitlo follows your system language; you can change it in **View → Language**.
 
 ## Download and install (macOS)
