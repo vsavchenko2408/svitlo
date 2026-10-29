@@ -39,6 +39,7 @@ private:
     void setFlag(int flag);
     void rotateSelection(int delta);
     void removeSelection();
+    void changeLanguage(const QString& code);
 
     Catalog* m_catalog;
     ThumbnailCache* m_thumbs;

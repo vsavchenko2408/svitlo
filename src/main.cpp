@@ -1,5 +1,6 @@
 #include "catalog/Catalog.h"
 #include "catalog/ThumbnailCache.h"
+#include "ui/Language.h"
 #include "ui/MainWindow.h"
 #include "ui/SupportDialog.h"
 #include "ui/Theme.h"
@@ -17,6 +18,7 @@ int main(int argc, char* argv[]) {
     QApplication::setApplicationVersion(SVITLO_VERSION);
 
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/svitlo.png")));
+    svitlo::language::install(app, svitlo::language::resolve());
     svitlo::theme::apply(app);
 
     // macOS: ~/Library/Application Support/Svitlo/Svitlo and ~/Library/Caches/Svitlo/Svitlo

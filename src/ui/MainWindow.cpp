@@ -7,10 +7,13 @@
 #include "ui/ExportDialog.h"
 #include "ui/LicensesDialog.h"
 #include "ui/SupportDialog.h"
+#include "ui/Language.h"
 #include "ui/LibraryView.h"
 #include "ui/PhotoModel.h"
 
 #include <QAction>
+#include <QActionGroup>
+#include <QProcess>
 #include <QApplication>
 #include <QButtonGroup>
 #include <QCloseEvent>
@@ -107,18 +110,20 @@ void MainWindow::buildMenus() {
     };
 
     QMenu* file = menuBar()->addMenu(tr("&File"));
-    add(file, tr("Import Folder…"), QKeySequence(tr("Ctrl+Shift+I")), [this] { importFolder(); });
-    add(file, tr("Export…"), QKeySequence(tr("Ctrl+Shift+E")), [this] { exportPhotos(); });
+    add(file, tr("Import Folder…"), QKeySequence(QStringLiteral("Ctrl+Shift+I")), [this] { importFolder(); });
+    add(file, tr("Export…"), QKeySequence(QStringLiteral("Ctrl+Shift+E")), [this] { exportPhotos(); });
     file->addSeparator();
-    add(file, tr("Quit"), QKeySequence::Quit, [this] { close(); });
+    // Explicit roles: on macOS Qt otherwise guesses from the (English) text,
+    // which fails once the menu is translated.
+    add(file, tr("Quit"), QKeySequence::Quit, [this] { close(); })->setMenuRole(QAction::QuitRole);
 
     QMenu* edit = menuBar()->addMenu(tr("&Edit"));
     add(edit, tr("Undo"), QKeySequence::Undo, [this] { if (inDevelop()) m_develop->undo(); });
     add(edit, tr("Redo"), QKeySequence::Redo, [this] { if (inDevelop()) m_develop->redo(); });
     edit->addSeparator();
-    add(edit, tr("Copy Settings"), QKeySequence(tr("Ctrl+Shift+C")), [this] { copySettings(); });
-    add(edit, tr("Paste Settings"), QKeySequence(tr("Ctrl+Shift+V")), [this] { pasteSettings(); });
-    add(edit, tr("Reset Settings"), QKeySequence(tr("Ctrl+Shift+R")), [this] {
+    add(edit, tr("Copy Settings"), QKeySequence(QStringLiteral("Ctrl+Shift+C")), [this] { copySettings(); });
+    add(edit, tr("Paste Settings"), QKeySequence(QStringLiteral("Ctrl+Shift+V")), [this] { pasteSettings(); });
+    add(edit, tr("Reset Settings"), QKeySequence(QStringLiteral("Ctrl+Shift+R")), [this] {
         if (inDevelop()) {
             m_develop->resetAll();
         } else {
@@ -144,8 +149,8 @@ void MainWindow::buildMenus() {
     add(photo, tr("Reject"), QKeySequence("X"), [this] { setFlag(-1); });
     add(photo, tr("Unflag"), QKeySequence("U"), [this] { setFlag(0); });
     photo->addSeparator();
-    add(photo, tr("Rotate Left"), QKeySequence(tr("Ctrl+[")), [this] { rotateSelection(-1); });
-    add(photo, tr("Rotate Right"), QKeySequence(tr("Ctrl+]")), [this] { rotateSelection(1); });
+    add(photo, tr("Rotate Left"), QKeySequence(QStringLiteral("Ctrl+[")), [this] { rotateSelection(-1); });
+    add(photo, tr("Rotate Right"), QKeySequence(QStringLiteral("Ctrl+]")), [this] { rotateSelection(1); });
     photo->addSeparator();
     add(photo, tr("Remove from Catalog…"), QKeySequence(Qt::Key_Backspace), [this] { removeSelection(); });
 
@@ -162,6 +167,24 @@ void MainWindow::buildMenus() {
     add(view, tr("Toggle Zoom"), QKeySequence("Z"), [this] { if (inDevelop()) m_develop->toggleZoom(); });
     add(view, tr("Next Photo"), QKeySequence(Qt::Key_Right), [this] { if (inDevelop()) m_develop->step(1); });
     add(view, tr("Previous Photo"), QKeySequence(Qt::Key_Left), [this] { if (inDevelop()) m_develop->step(-1); });
+    view->addSeparator();
+
+    // Language: "System" follows the OS; changing it needs a restart.
+    QMenu* langMenu = view->addMenu(tr("Language"));
+    auto* langGroup = new QActionGroup(this);
+    const QString saved = language::savedChoice();
+    auto addLang = [&](const QString& code, const QString& name) {
+        QAction* a = langMenu->addAction(name);
+        a->setCheckable(true);
+        a->setChecked(code == saved);
+        a->setMenuRole(QAction::NoRole);
+        langGroup->addAction(a);
+        connect(a, &QAction::triggered, this, [this, code] { changeLanguage(code); });
+    };
+    addLang(QString(), tr("System Default"));
+    langMenu->addSeparator();
+    for (const language::Info& l : language::supported())
+        addLang(l.code, l.nativeName);
 
     QMenu* help = menuBar()->addMenu(tr("&Help"));
     add(help, tr("Support Svitlo…"), QKeySequence(), [this] {
@@ -169,7 +192,7 @@ void MainWindow::buildMenus() {
     });
     add(help, tr("Licenses…"), QKeySequence(), [this] { LicensesDialog(this).exec(); });
     help->addSeparator();
-    add(help, tr("About Svitlo"), QKeySequence(), [this] {
+    QAction* about = add(help, tr("About Svitlo"), QKeySequence(), [this] {
         QMessageBox::about(this, tr("About Svitlo"),
                            tr("<h3>Svitlo %1</h3>"
                               "<p>A free, open-source photo library and non-destructive editor.</p>"
@@ -177,6 +200,26 @@ void MainWindow::buildMenus() {
                                .arg(QApplication::applicationVersion(), QT_VERSION_STR,
                                     ImageLoader::rawSupportCompiled() ? tr(" and LibRaw") : QString()));
     });
+    about->setMenuRole(QAction::AboutRole);
+}
+
+void MainWindow::changeLanguage(const QString& code) {
+    if (code == language::savedChoice())
+        return;
+    language::saveChoice(code);
+
+    QMessageBox box(this);
+    box.setIcon(QMessageBox::Information);
+    box.setWindowTitle(tr("Language"));
+    box.setText(tr("The new language will be used after Svitlo restarts."));
+    QPushButton* restart = box.addButton(tr("Restart Now"), QMessageBox::AcceptRole);
+    box.addButton(tr("Later"), QMessageBox::RejectRole);
+    box.exec();
+    if (box.clickedButton() == restart) {
+        m_develop->flush();
+        QProcess::startDetached(QApplication::applicationFilePath(), {});
+        close();
+    }
 }
 
 bool MainWindow::inDevelop() const { return m_stack->currentWidget() == m_develop; }

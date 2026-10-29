@@ -45,6 +45,8 @@ if(APPLE)
 endif()
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Sql Concurrent)
+# Optional: needed to compile the interface translations (.ts → .qm).
+find_package(Qt6 6.4 QUIET COMPONENTS LinguistTools)
 
 # ---------------------------------------------------------------- LibRaw ----
 set(SVITLO_HAVE_LIBRAW OFF)
@@ -111,6 +113,7 @@ set(APP_SOURCES
     src/ui/ToneCurveWidget.h         src/ui/ToneCurveWidget.cpp
     src/ui/HistogramWidget.h         src/ui/HistogramWidget.cpp
     src/ui/ExportDialog.h            src/ui/ExportDialog.cpp
+    src/ui/Language.h                src/ui/Language.cpp
     src/ui/SupportDialog.h           src/ui/SupportDialog.cpp
     src/ui/LicensesDialog.h          src/ui/LicensesDialog.cpp
 )
@@ -141,6 +144,36 @@ add_executable(Svitlo MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP
                ${APP_LICENSE_FILES})
 target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql)
 target_compile_definitions(Svitlo PRIVATE SVITLO_VERSION="${PROJECT_VERSION}")
+
+# ---------------------------------------------------------- translations ----
+# Source language is English. Russian is intentionally not provided.
+set(SVITLO_LANGUAGES uk da de pl)
+set(SVITLO_TS_FILES "")
+foreach(_lang ${SVITLO_LANGUAGES})
+    list(APPEND SVITLO_TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/translations/svitlo_${_lang}.ts")
+endforeach()
+
+if(TARGET Qt6::lrelease)
+    # Compiles the .ts files and embeds them under :/i18n.
+    # `cmake --build build --target update_translations` re-scans the code.
+    qt_add_translations(Svitlo TS_FILES ${SVITLO_TS_FILES} RESOURCE_PREFIX "/i18n")
+
+    # Qt's own strings (standard buttons, dialogs) for the same languages,
+    # embedded under :/qt_i18n so the .app needs nothing extra.
+    set(_qt_tr_dir "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS}")
+    set(_qt_qrc "${CMAKE_CURRENT_BINARY_DIR}/qt_translations.qrc")
+    set(_qrc_body "<!DOCTYPE RCC>\n<RCC version=\"1.0\">\n<qresource prefix=\"/qt_i18n\">\n")
+    foreach(_lang ${SVITLO_LANGUAGES})
+        if(EXISTS "${_qt_tr_dir}/qtbase_${_lang}.qm")
+            string(APPEND _qrc_body "<file alias=\"qtbase_${_lang}.qm\">${_qt_tr_dir}/qtbase_${_lang}.qm</file>\n")
+        endif()
+    endforeach()
+    string(APPEND _qrc_body "</qresource>\n</RCC>\n")
+    file(WRITE "${_qt_qrc}" "${_qrc_body}")
+    target_sources(Svitlo PRIVATE "${_qt_qrc}")
+else()
+    message(WARNING "Svitlo: Qt LinguistTools not found — the app will be English only.")
+endif()
 
 set_target_properties(Svitlo PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.svitlo"

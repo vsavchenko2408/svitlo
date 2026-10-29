@@ -2,6 +2,7 @@
 
 #include "core/ColorMath.h"
 
+#include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
@@ -171,7 +172,7 @@ ImageBuffer loadRaw(const QString& path, bool halfSize, QString* error, ImageInf
     int err = 0;
     libraw_processed_image_t* img = proc->dcraw_make_mem_image(&err);
     if (!img || img->type != LIBRAW_IMAGE_BITMAP || img->colors != 3 || img->bits != 16) {
-        if (error) *error = QStringLiteral("Unsupported RAW output layout");
+        if (error) *error = QCoreApplication::translate("ImageLoader", "Unsupported RAW output layout");
         if (img) LibRaw::dcraw_clear_mem(img);
         return {};
     }
@@ -243,7 +244,7 @@ ImageBuffer ImageLoader::load(const QString& path, Quality quality, int maxLongE
             buf = downscaleToFit(buf, maxLongEdge);
         return buf;
 #else
-        if (error) *error = QStringLiteral("This build has no RAW support (LibRaw missing)");
+        if (error) *error = QCoreApplication::translate("ImageLoader", "This build has no RAW support (LibRaw missing)");
         return {};
 #endif
     }
