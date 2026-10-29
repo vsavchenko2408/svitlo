@@ -9,7 +9,7 @@ if(CMAKE_HOST_APPLE AND NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version")
 endif()
 
-project(Svitlo VERSION 0.1.0 LANGUAGES CXX)
+project(Svitlo VERSION 0.2.0 LANGUAGES CXX)
 
 # Svitlo — a free, open-source photo library and non-destructive photo editor.
 # Targets: macOS 12+ (Qt 6.5), Linux, Windows 10+.
