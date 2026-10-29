@@ -1,141 +1,171 @@
-# Svitlo
+<p align="center">
+  <img src="resources/icons/svitlo.png" width="128" alt="Svitlo icon">
+</p>
 
-**Svitlo** («світло») — безкоштовна фото-бібліотека та неруйнівний редактор фотографій з відкритим кодом, написаний на C++17 і Qt 6. Перша ціль — macOS 12 Monterey; код кросплатформний і вже збирається на Linux.
+<h1 align="center">Svitlo</h1>
 
-Оригінали ніколи не змінюються: усі правки — це набір параметрів, який зберігається в каталозі (SQLite) і в маленькому JSON-файлі поруч із фото (`IMG_0001.NEF.svitlo.json`).
+<p align="center">
+  A free, open-source photo library and non-destructive RAW editor.<br>
+  Written in C++17 with Qt 6.
+</p>
 
----
+<p align="center">
+  <a href="https://github.com/vsavchenko2408/svitlo/releases/latest"><b>Download for macOS</b></a> ·
+  <a href="README.uk.md">🇺🇦 Українською</a> ·
+  <a href="https://ko-fi.com/dermeister">Support on Ko-fi</a>
+</p>
 
-## Можливості (v0.1)
+<p align="center">
+  <img src="docs/screenshots/develop.png" width="900" alt="Svitlo Develop view">
+</p>
 
-**Бібліотека**
-- Імпорт папки (рекурсивно), каталог на SQLite, кеш мініатюр на диску
-- Рейтинг 0–5, позначки «обрано / відхилено», фільтри, пошук за назвою файлу чи камерою, сортування
-- Список папок, масштаб сітки, мультивибір
-- Копіювання/вставка налаштувань на багато фото одразу (кадрування не вставляється)
+**Svitlo** (Ukrainian for *"light"*) lets you organise your photos and edit them without ever touching the originals. Every edit is stored as a small set of parameters, so you can change your mind at any time.
 
-**Обробка**
-- RAW (через LibRaw: NEF, CR2, CR3, ARW, RAF, ORF, RW2, DNG…) та JPEG / PNG / TIFF
-- Баланс білого (температура, відтінок), експозиція, контраст, світла, тіні, білі, чорні
-- Clarity (локальний контраст), Vibrance, насиченість, чорно-біле
-- Крива тонів (монотонна кубічна інтерполяція, без «перегинів»)
-- Кадрування з пропорціями, вирівнювання горизонту з автопідгонкою рамки, поворот на 90°
-- Різкість (unsharp mask), віньєтка
-- Гістограма RGB з індикаторами пересвіту, «до / після», масштаб 100 % і панорамування
-- Автотон, історія з Undo/Redo, стрічка фото внизу
+## Features
 
-**Експорт**
-- JPEG (якість), PNG, TIFF (якщо є плагін Qt), зменшення за довгою стороною, суфікс імені
-- Пакетний експорт у фоні з прогресом; файли ніколи не перезаписуються
+**Library**
+- Import whole folders (including subfolders) into a fast SQLite catalog
+- Star ratings (0–5), pick / reject flags, filters, search by file name or camera
+- Thumbnail grid with adjustable size, folder list, multi-selection
+- Copy and paste develop settings to many photos at once
 
-## Гарячі клавіші
+**Develop**
+- RAW files via LibRaw (NEF, CR2, CR3, ARW, RAF, ORF, RW2, DNG and many more) plus JPEG, PNG and TIFF
+- White balance (temperature, tint), exposure, contrast, highlights, shadows, whites, blacks
+- Clarity, vibrance, saturation, black & white
+- Tone curve with smooth, monotone interpolation
+- Crop with aspect ratios, straighten with automatic frame fitting, 90° rotation
+- Sharpening and vignette
+- RGB histogram with clipping indicators, before / after view, 100% zoom and panning
+- Auto tone, full undo / redo history, filmstrip
 
-| Клавіша | Дія |
+**Export**
+- JPEG (adjustable quality), PNG and TIFF, optional resizing by long edge
+- Batch export in the background; existing files are never overwritten
+
+**Non-destructive by design.** Edits live in the catalog and in a small sidecar file next to each photo (`IMG_0001.NEF.svitlo.json`), so they travel with your pictures.
+
+**Languages:** English, Ukrainian, Danish, German and Polish. Svitlo follows your system language; you can change it in **View → Language**.
+
+## Download and install (macOS)
+
+1. Download the latest `.dmg` from [Releases](https://github.com/vsavchenko2408/svitlo/releases/latest).
+2. Open it and drag **Svitlo** to **Applications**.
+3. Svitlo is not signed with an Apple Developer certificate yet, so macOS will block the first launch. To allow it:
+   - try to open Svitlo once, then go to **System Settings → Privacy & Security** and click **Open Anyway**, or
+   - run this in Terminal:
+     ```bash
+     xattr -dr com.apple.quarantine /Applications/Svitlo.app
+     ```
+
+**Requirements:** macOS 12 Monterey or later. The current build is for Intel Macs; on Apple Silicon it should run through Rosetta 2 (not tested yet).
+
+## Keyboard shortcuts
+
+| Key | Action |
 |---|---|
-| `G` / `D` | Бібліотека / Обробка |
-| `0`–`5` | Рейтинг |
-| `P` / `X` / `U` | Обрати / Відхилити / Зняти позначку |
-| `C` | Інструмент кадрування |
-| `\` | До / після |
-| `Z` або подвійний клік | Вмістити / 100 % |
-| `⌘` + колесо | Плавний зум |
-| `←` / `→` | Попереднє / наступне фото |
-| `⌘Z` / `⇧⌘Z` | Скасувати / Повторити |
-| `⇧⌘C` / `⇧⌘V` | Копіювати / Вставити налаштування |
-| `⇧⌘E` | Експорт |
-| `⌘[` / `⌘]` | Поворот на 90° |
+| `G` / `D` | Library / Develop |
+| `0`–`5` | Set rating |
+| `P` / `X` / `U` | Pick / Reject / Unflag |
+| `C` | Crop tool |
+| `\` | Before / after |
+| `Z` or double-click | Fit / 100% |
+| `⌘` + scroll | Smooth zoom |
+| `←` / `→` | Previous / next photo |
+| `⌘Z` / `⇧⌘Z` | Undo / Redo |
+| `⇧⌘C` / `⇧⌘V` | Copy / paste settings |
+| `⇧⌘E` | Export |
+| `⌘[` / `⌘]` | Rotate 90° |
 
-Подвійний клік по назві повзунка скидає його до нуля.
+Double-click a slider's name to reset it.
 
----
+## Building from source
 
-## Збірка на macOS 12 Monterey
+### macOS
 
-### 1. Інструменти
+You need Xcode (or the Command Line Tools), CMake and **Qt 6.5** (the *macOS* component from the official Qt Online Installer). Qt 6.5 is used because it still supports macOS 11 and later; newer Qt versions require newer macOS.
+
+LibRaw does not need to be installed: on macOS CMake downloads it and builds it together with the app, using the same minimum macOS version.
+
 ```bash
-xcode-select --install
-```
-
-### 2. Qt 6.5 LTS
-Встанови **Qt 6.5** через офіційний Qt Online Installer (open-source версія), компонент *macOS*. Разом з ним можна поставити CMake.
-
-Чому саме 6.5: офіційно Qt 6.5 підтримує ціль macOS 11 і новіше та збирається з Xcode 13 і новіше. Для Qt 6.8 потрібен Xcode 15 (macOS 14 SDK), тож на Monterey 6.5 — надійніший вибір.
-
-### 3. LibRaw (для RAW)
-Нічого встановлювати не треба. На macOS CMake сам завантажує LibRaw з GitHub і збирає її разом із програмою (статично), з тією ж мінімальною версією macOS. Перша збірка через це триває на кілька хвилин довше, і потрібен інтернет.
-
-Мінімальна версія macOS задається змінною `CMAKE_OSX_DEPLOYMENT_TARGET` (за замовчуванням `12.0`). Програма запуститься там, де виконуються обидві умови: ця змінна і мінімум самого Qt (Qt 6.5 → macOS 11, Qt 6.12 → macOS 14.4). Для Monterey збирай з Qt 6.5.
-
-### 4. Збірка
-```bash
+git clone https://github.com/vsavchenko2408/svitlo.git
 cd svitlo
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$HOME/Qt/6.5.3/macos
 cmake --build build -j
 open build/Svitlo.app
 ```
 
-Тести ядра: `cd build && ctest --output-on-failure`
+Run the core tests with `cd build && ctest --output-on-failure`.
 
-### 5. Готовий .app / .dmg для інших комп'ютерів
+To create a distributable disk image:
 ```bash
 packaging/make-dmg.sh build/Svitlo.app ~/Qt/6.5.3/macos
 ```
-Застосунок не підписаний, тому перший запуск — правий клік → «Відкрити».
 
-## Збірка на Linux (Debian / Ubuntu)
+The minimum macOS version is set by `CMAKE_OSX_DEPLOYMENT_TARGET` (default `12.0`).
+
+### Linux (Debian / Ubuntu)
+
 ```bash
-sudo apt install qt6-base-dev libqt6sql6-sqlite libraw-dev cmake g++ pkg-config
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j
+sudo apt install qt6-base-dev qt6-tools-dev qt6-l10n-tools libqt6sql6-sqlite libraw-dev cmake g++ pkg-config
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
 ./build/Svitlo
 ```
 
-Де лежать дані на macOS: каталог — `~/Library/Application Support/Svitlo/Svitlo/catalog.sqlite`, мініатюри — `~/Library/Caches/Svitlo/Svitlo/thumbnails`.
-
----
-
-## Мови інтерфейсу
-
-English (основна), українська, данська, німецька, польська. За замовчуванням програма бере мову системи; змінити можна в меню **View → Language** (діє після перезапуску). Російської мови немає і не буде.
-
-Як оновити переклади після зміни текстів у коді:
-```bash
-cmake --build build --target update_translations   # оновить translations/*.ts
-python3 translations/fill_translations.py          # заповнить переклади з таблиці в скрипті
-```
-Рядки, яких немає в таблиці, скрипт покаже списком; у програмі вони лишаться англійською.
-
----
-
-## Архітектура
+## Architecture
 
 ```
 src/
-  core/       ядро без віджетів — його ж використовують тести
-    ImageLoader   RAW (LibRaw, лінійний 16-біт) і звичайні формати → float RGB
-    Pipeline      геометрія → ББ/експозиція → clarity → тон → колір → віньєтка
-                  → м'яке обрізання гамми → різкість → 8-біт sRGB
-    ToneCurve     Fritsch–Carlson монотонний сплайн
-    Geometry      повороти, вирівнювання, підгонка рамки кадрування
-    EditSettings  параметри правок + JSON
-    Exporter      повна роздільність, пакетний експорт
-  catalog/    SQLite-каталог, асинхронний кеш мініатюр
-  ui/         Qt Widgets: бібліотека, обробка, панель, крива, гістограма, кадрування
-tests/        тести ядра (без дисплея)
+  core/       image pipeline without any widget code (also used by the tests)
+    ImageLoader   RAW (LibRaw, linear 16-bit) and common formats → float RGB
+    Pipeline      geometry → white balance / exposure → clarity → tone → colour
+                  → vignette → gamut soft-clip → sharpening → 8-bit sRGB
+    ToneCurve     Fritsch–Carlson monotone spline
+    Geometry      rotation, straightening, crop fitting
+    EditSettings  edit parameters + JSON serialisation
+    Exporter      full-resolution batch export
+  catalog/    SQLite catalog, asynchronous thumbnail cache
+  ui/         Qt Widgets: library, develop view, panels, tone curve, histogram, crop
+tests/        core tests (run without a display)
+translations/ interface translations
 ```
 
-Ключові рішення:
-- **Обробка у float з лінійним світлом.** Експозиція та баланс білого — множення в лінійному просторі; тон рахується від яскравості й масштабує RGB пропорційно, щоб не зсувати відтінки.
-- **Прев'ю ≤ 2560 px.** Кожен рух повзунка рендериться у фоновому потоці; якщо рендер ще йде, наступний «склеюється» і запускається з найсвіжішими параметрами.
-- **Однаковий вигляд прев'ю й експорту.** Радіуси різкості масштабуються за `resolutionScale`, радіус clarity відносний до розміру кадру.
-- **Багатопоточність** через `QtConcurrent::blockingMap` по рядках зображення.
+Some design decisions:
+- **Float processing in linear light.** Exposure and white balance are applied as gains in linear space; tone adjustments work on luminance and scale RGB proportionally, so hues don't shift.
+- **Responsive previews.** The preview is limited to 2560 px and rendered on a background thread. While a render is running, newer slider changes are coalesced into the next render.
+- **Preview matches export.** Sharpening radii are scaled to the preview resolution, and clarity uses a radius relative to the image size.
+- **Multithreading** with `QtConcurrent` over image rows.
 
-## Що далі (roadmap)
-- Змішувач кольорів HSL, колірне тонування
-- Локальні маски (градієнт, пензель)
-- Корекція об'єктивів (lensfun), шумозаглушення
-- 100 % з повної роздільності, копіювання EXIF при експорті
-- Пресети, віртуальні копії, колекції
-- Порти: Linux (вже збирається), Windows
+## Translations
 
-## Правове
-Svitlo — незалежний проєкт. Код написаний з нуля і поширюється під ліцензією MIT. Проєкт не пов'язаний з Adobe та не використовує їхній код, назви, логотипи, іконки чи файли. Залежності: Qt 6 (LGPL v3) підключається динамічно. LibRaw (подвійна ліцензія LGPL 2.1 / CDDL 1.0) на macOS збирається з незміненого офіційного вихідного коду й лінкується статично; на Linux береться системний пакет.
+Translations live in `translations/*.ts`. After changing interface strings:
+```bash
+cmake --build build --target update_translations   # update the .ts files
+python3 translations/fill_translations.py          # fill them from the table in the script
+```
+
+## Roadmap
+
+- HSL colour mixer and split toning
+- Local adjustments (graduated filter, brush)
+- Lens correction (lensfun) and noise reduction
+- Full-resolution 100% view, EXIF copying on export
+- Presets, virtual copies, collections
+- Linux and Windows releases, Apple Silicon build
+
+## Support
+
+Svitlo is free and made in my spare time. If you find it useful, you can support its development on [Ko-fi](https://ko-fi.com/dermeister) or with Bitcoin (address in **Help → Support Svitlo**). Bug reports and ideas are very welcome in [Issues](https://github.com/vsavchenko2408/svitlo/issues).
+
+## License
+
+Svitlo is released under the [MIT License](LICENSE).
+
+It uses [Qt 6](https://www.qt.io) under the LGPL v3 (linked dynamically) and [LibRaw](https://github.com/LibRaw/LibRaw) under the CDDL 1.0 (LibRaw is dual-licensed LGPL 2.1 / CDDL 1.0). Full notices are in **Help → Licenses**.
+
+Svitlo is an independent project and is not affiliated with any commercial photo software vendor.
+
+---
+
+<p align="center">Made in Ukraine 🇺🇦</p>
