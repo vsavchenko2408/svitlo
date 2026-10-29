@@ -65,7 +65,7 @@ bool Exporter::exportPhoto(const QString& sourcePath, const EditSettings& settin
     for (int n = 2; QFileInfo::exists(target); ++n)
         target = dir.filePath(QStringLiteral("%1_%2.%3").arg(base).arg(n).arg(options.format));
 
-    QImageWriter writer(target, options.format == "tif" ? "tiff" : options.format.toLatin1());
+    QImageWriter writer(target, options.format == "tif" ? QByteArray("tiff") : options.format.toLatin1());
     if (options.format == "jpg")
         writer.setQuality(std::clamp(options.quality, 1, 100));
     if (!writer.write(out)) {
