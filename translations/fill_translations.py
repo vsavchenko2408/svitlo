@@ -415,6 +415,49 @@ T = {
         de="Heruntergeladen nach %1. Beenden Sie Svitlo, entpacken Sie die Datei und ersetzen Sie den alten Svitlo-Ordner durch den neuen.",
         pl="Pobrano do %1. Zamknij Svitlo, rozpakuj plik i zastąp stary folder Svitlo nowym."),
     "Quit Svitlo": dict(uk="Закрити Svitlo", da="Afslut Svitlo", de="Svitlo beenden", pl="Zamknij Svitlo"),
+    # --- 0.3.0: appearance, removing folders, grid menu -----------------------------
+    "Show in Finder": dict(uk="Показати у Finder", da="Vis i Finder", de="Im Finder zeigen",
+                           pl="Pokaż w Finderze"),
+    "Show in Explorer": dict(uk="Показати в Провіднику", da="Vis i Stifinder", de="Im Explorer anzeigen",
+                             pl="Pokaż w Eksploratorze"),
+    "Show in File Manager": dict(uk="Показати у файловому менеджері", da="Vis i filhåndtering",
+                                 de="Im Dateimanager anzeigen", pl="Pokaż w menedżerze plików"),
+    "Remove Folder from Catalog…": dict(uk="Видалити папку з каталогу…", da="Fjern mappe fra katalog…",
+                                        de="Ordner aus Katalog entfernen…", pl="Usuń folder z katalogu…"),
+    "Select a folder in the Library's folder list first": dict(
+        uk="Спершу виберіть папку в списку папок Бібліотеки",
+        da="Vælg først en mappe på mappelisten i Bibliotek",
+        de="Wählen Sie zuerst einen Ordner in der Ordnerliste der Bibliothek",
+        pl="Najpierw wybierz folder na liście folderów Biblioteki"),
+    "Open in Develop": dict(uk="Відкрити в Обробці", da="Åbn i Fremkald", de="In Entwickeln öffnen",
+                            pl="Otwórz w Wywoływaniu"),
+    "Appearance": dict(uk="Оформлення", da="Udseende", de="Erscheinungsbild", pl="Wygląd"),
+    "Match System": dict(uk="Як у системі", da="Som systemet", de="Wie das System", pl="Jak w systemie"),
+    "Dark": dict(uk="Темне", da="Mørkt", de="Dunkel", pl="Ciemny"),
+    "Light": dict(uk="Світле", da="Lyst", de="Hell", pl="Jasny"),
+    "Remove folder from catalog": dict(uk="Видалення папки з каталогу", da="Fjern mappe fra katalog",
+                                       de="Ordner aus Katalog entfernen", pl="Usuwanie folderu z katalogu"),
+    "Remove “%1” and its %n photo(s) from the catalog?": dict(
+        uk=["Видалити «%1» і %n фото з каталогу?"] * 3,
+        da=["Fjern »%1« og dets %n foto fra kataloget?", "Fjern »%1« og dets %n fotos fra kataloget?"],
+        de=["„%1“ mit %n Foto aus dem Katalog entfernen?", "„%1“ mit %n Fotos aus dem Katalog entfernen?"],
+        pl=["Usunąć „%1” i %n zdjęcie z katalogu?", "Usunąć „%1” i %n zdjęcia z katalogu?",
+            "Usunąć „%1” i %n zdjęć z katalogu?"]),
+    "The files on disk are not deleted. Your edits are kept in the .svitlo.json files next to the photos, so importing the folder again brings them back.": dict(
+        uk="Файли на диску не видаляються. Ваші зміни зберігаються у файлах .svitlo.json поруч із фото, "
+           "тож якщо імпортувати папку знову, вони повернуться.",
+        da="Filerne på disken slettes ikke. Dine redigeringer gemmes i .svitlo.json-filerne ved siden af "
+           "fotoene, så de kommer tilbage, hvis du importerer mappen igen.",
+        de="Die Dateien auf dem Datenträger werden nicht gelöscht. Ihre Bearbeitungen bleiben in den "
+           ".svitlo.json-Dateien neben den Fotos erhalten und kehren zurück, wenn Sie den Ordner erneut importieren.",
+        pl="Pliki na dysku nie zostaną usunięte. Twoje zmiany są zapisane w plikach .svitlo.json obok zdjęć, "
+           "więc po ponownym zaimportowaniu folderu wrócą."),
+    "Remove": dict(uk="Видалити", da="Fjern", de="Entfernen", pl="Usuń"),
+    "Removed %n photo(s) from the catalog": dict(
+        uk=["Видалено %n фото з каталогу"] * 3,
+        da=["Fjernede %n foto fra kataloget", "Fjernede %n fotos fra kataloget"],
+        de=["%n Foto aus dem Katalog entfernt", "%n Fotos aus dem Katalog entfernt"],
+        pl=["Usunięto %n zdjęcie z katalogu", "Usunięto %n zdjęcia z katalogu", "Usunięto %n zdjęć z katalogu"]),
 }
 
 PLURAL_FORMS = {"uk": 3, "pl": 3, "da": 2, "de": 2}

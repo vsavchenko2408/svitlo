@@ -36,6 +36,8 @@ public:
     void setSettings(qint64 id, const EditSettings& settings);
     void updateInfo(qint64 id, const ImageInfo& info);
     void remove(const QVector<qint64>& ids);
+    // Ids of the photos imported with this folder (the folder list entry).
+    QVector<qint64> photosInFolder(const QString& folder) const;
 
     static QString sidecarPath(const QString& photoPath);
 

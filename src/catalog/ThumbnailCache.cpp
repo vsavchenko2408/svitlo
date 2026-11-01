@@ -121,4 +121,14 @@ void ThumbnailCache::store(const PhotoRecord& rec, const QImage& image) {
     emit thumbnailReady(rec.id);
 }
 
+void ThumbnailCache::forget(const QVector<qint64>& ids) {
+    QDir dir(m_dir);
+    for (qint64 id : ids) {
+        m_memory.remove(id);
+        // Files are named "<id>_<editStamp>.jpg".
+        for (const QString& f : dir.entryList({QStringLiteral("%1_*.jpg").arg(id)}, QDir::Files))
+            dir.remove(f);
+    }
+}
+
 } // namespace svitlo

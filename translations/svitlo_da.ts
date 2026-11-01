@@ -3,12 +3,10 @@
 <context>
     <name>ImageLoader</name>
     <message>
-        <location filename="../src/core/ImageLoader.cpp" line="+189" />
         <source>Unsupported RAW output layout</source>
         <translation>Ikke-understøttet RAW-dataformat</translation>
     </message>
     <message>
-        <location line="+71" />
         <source>This build has no RAW support (LibRaw missing)</source>
         <translation>Denne version understøtter ikke RAW (LibRaw mangler)</translation>
     </message>
@@ -16,17 +14,14 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/core/Exporter.cpp" line="+26" />
         <source>Cannot read %1: %2</source>
         <translation>Kan ikke læse %1: %2</translation>
     </message>
     <message>
-        <location line="+28" />
         <source>Processing failed</source>
         <translation>Behandlingen mislykkedes</translation>
     </message>
     <message>
-        <location line="+6" />
         <source>Cannot create folder %1</source>
         <translation>Kan ikke oprette mappen %1</translation>
     </message>
@@ -416,7 +411,7 @@
 <context>
     <name>svitlo::LibraryView</name>
     <message>
-        <location filename="../src/ui/LibraryView.cpp" line="+32" />
+        <location filename="../src/ui/LibraryView.cpp" line="+35" />
         <source>FOLDERS</source>
         <translation>MAPPER</translation>
     </message>
@@ -426,7 +421,27 @@
         <translation>Importér mappe…</translation>
     </message>
     <message>
-        <location line="+8" />
+        <location line="+15" />
+        <source>Show in Finder</source>
+        <translation>Vis i Finder</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in Explorer</source>
+        <translation>Vis i Stifinder</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in File Manager</source>
+        <translation>Vis i filhåndtering</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Fjern mappe fra katalog…</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Search file name or camera</source>
         <translation>Søg efter filnavn eller kamera</translation>
     </message>
@@ -522,19 +537,19 @@
 <context>
     <name>svitlo::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="+69" />
-        <location line="+91" />
+        <location filename="../src/ui/MainWindow.cpp" line="+74" />
+        <location line="+116" />
         <source>Library</source>
         <translation>Bibliotek</translation>
     </message>
     <message>
-        <location line="-89" />
-        <location line="+90" />
+        <location line="-114" />
+        <location line="+115" />
         <source>Develop</source>
         <translation>Fremkald</translation>
     </message>
     <message>
-        <location line="-65" />
+        <location line="-89" />
         <source>Ready</source>
         <translation>Klar</translation>
     </message>
@@ -554,12 +569,22 @@
         <translation>Importér mappe…</translation>
     </message>
     <message>
-        <location line="+1" />
+        <location line="+2" />
         <source>Export…</source>
         <translation>Eksportér…</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+2" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Fjern mappe fra katalog…</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Select a folder in the Library's folder list first</source>
+        <translation>Vælg først en mappe på mappelisten i Bibliotek</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Quit</source>
         <translation>Afslut</translation>
     </message>
@@ -639,12 +664,17 @@
         <translation>Rotér til højre</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+3" />
         <source>Remove from Catalog…</source>
         <translation>Fjern fra katalog…</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+4" />
+        <source>Open in Develop</source>
+        <translation>Åbn i Fremkald</translation>
+    </message>
+    <message>
+        <location line="+12" />
         <source>&amp;View</source>
         <translation>&amp;Vis</translation>
     </message>
@@ -675,17 +705,37 @@
     </message>
     <message>
         <location line="+4" />
-        <location line="+48" />
+        <location line="+67" />
         <source>Language</source>
         <translation>Sprog</translation>
     </message>
     <message>
-        <location line="-37" />
+        <location line="-56" />
         <source>System Default</source>
         <translation>Systemstandard</translation>
     </message>
     <message>
-        <location line="+5" />
+        <location line="+6" />
+        <source>Appearance</source>
+        <translation>Udseende</translation>
+    </message>
+    <message>
+        <location line="+13" />
+        <source>Match System</source>
+        <translation>Som systemet</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Dark</source>
+        <translation>Mørkt</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Light</source>
+        <translation>Lyst</translation>
+    </message>
+    <message>
+        <location line="+2" />
         <source>&amp;Help</source>
         <translation>&amp;Hjælp</translation>
     </message>
@@ -766,7 +816,7 @@
         <translation>Vælg fotos, der skal eksporteres</translation>
     </message>
     <message>
-        <location line="+18" />
+        <location line="+23" />
         <source>Exporting…</source>
         <translation>Eksporterer…</translation>
     </message>
@@ -791,7 +841,7 @@
         <translation>Vis mappe</translation>
     </message>
     <message>
-        <location line="+30" />
+        <location line="+28" />
         <source>Settings copied</source>
         <translation>Indstillinger kopieret</translation>
     </message>
@@ -813,6 +863,31 @@ The files on disk are not deleted.</source>
 Filerne på disken slettes ikke.</numerusform><numerusform>Fjern %n fotos fra kataloget?
 Filerne på disken slettes ikke.</numerusform></translation>
     </message>
+    <message>
+        <location line="+11" />
+        <source>Remove folder from catalog</source>
+        <translation>Fjern mappe fra katalog</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1" />
+        <source>Remove “%1” and its %n photo(s) from the catalog?</source>
+        <translation><numerusform>Fjern »%1« og dets %n foto fra kataloget?</numerusform><numerusform>Fjern »%1« og dets %n fotos fra kataloget?</numerusform></translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>The files on disk are not deleted. Your edits are kept in the .svitlo.json files next to the photos, so importing the folder again brings them back.</source>
+        <translation>Filerne på disken slettes ikke. Dine redigeringer gemmes i .svitlo.json-filerne ved siden af fotoene, så de kommer tilbage, hvis du importerer mappen igen.</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Remove</source>
+        <translation>Fjern</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+12" />
+        <source>Removed %n photo(s) from the catalog</source>
+        <translation><numerusform>Fjernede %n foto fra kataloget</numerusform><numerusform>Fjernede %n fotos fra kataloget</numerusform></translation>
+    </message>
 </context>
 <context>
     <name>svitlo::SliderRow</name>
@@ -825,7 +900,7 @@ Filerne på disken slettes ikke.</numerusform></translation>
 <context>
     <name>svitlo::SupportDialog</name>
     <message>
-        <location filename="../src/ui/SupportDialog.cpp" line="+50" />
+        <location filename="../src/ui/SupportDialog.cpp" line="+49" />
         <source>Support Svitlo</source>
         <translation>Støt Svitlo</translation>
     </message>
@@ -867,7 +942,7 @@ Other coins sent here will be lost.</source>
 Andre mønter sendt hertil går tabt.</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+5" />
         <location line="+52" />
         <source>Copy address</source>
         <translation>Kopiér adresse</translation>

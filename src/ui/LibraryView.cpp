@@ -11,6 +11,9 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QListWidget>
+#include <QDesktopServices>
+#include <QMenu>
+#include <QUrl>
 #include <QPushButton>
 #include <QSlider>
 #include <QSplitter>
@@ -38,6 +41,29 @@ LibraryView::LibraryView(PhotoModel* model, QWidget* parent) : QWidget(parent), 
     leftLayout->addWidget(m_folders, 1);
     leftLayout->addWidget(importButton);
     connect(importButton, &QPushButton::clicked, this, &LibraryView::importRequested);
+
+    // Right-click on a folder: show it on disk or remove it from the catalog.
+    m_folders->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_folders, &QWidget::customContextMenuRequested, this, [this](const QPoint& pos) {
+        QListWidgetItem* item = m_folders->itemAt(pos);
+        if (!item || item->data(kAllFoldersRole).toBool())
+            return;
+        const QString folder = item->data(Qt::UserRole).toString();
+        QMenu menu(this);
+#if defined(Q_OS_MACOS)
+        const QString showText = tr("Show in Finder");
+#elif defined(Q_OS_WIN)
+        const QString showText = tr("Show in Explorer");
+#else
+        const QString showText = tr("Show in File Manager");
+#endif
+        menu.addAction(showText, this,
+                       [folder] { QDesktopServices::openUrl(QUrl::fromLocalFile(folder)); });
+        menu.addSeparator();
+        menu.addAction(tr("Remove Folder from Catalog…"), this,
+                       [this, folder] { emit removeFolderRequested(folder); });
+        menu.exec(m_folders->viewport()->mapToGlobal(pos));
+    });
 
     // --- Filter bar --------------------------------------------------------
     m_search = new QLineEdit;
@@ -95,7 +121,7 @@ LibraryView::LibraryView(PhotoModel* model, QWidget* parent) : QWidget(parent), 
                                  "<p>Use <b>Import Folder…</b> to add a folder of photos.<br>"
                                  "Your originals are never changed.</p>"));
     static_cast<QLabel*>(m_emptyState)->setAlignment(Qt::AlignCenter);
-    m_emptyState->setStyleSheet("color: #8D9095; background: #151617;");
+    m_emptyState->setObjectName("emptyState"); // styled in Theme.cpp
 
     auto* centreStack = new QWidget;
     auto* stack = new QStackedLayout(centreStack);
@@ -175,6 +201,13 @@ void LibraryView::refreshFolders() {
         if (f.first == current)
             m_folders->setCurrentItem(item);
     }
+}
+
+QString LibraryView::currentFolder() const {
+    const QListWidgetItem* item = m_folders->currentItem();
+    if (!item || item->data(kAllFoldersRole).toBool())
+        return QString();
+    return item->data(Qt::UserRole).toString();
 }
 
 QVector<qint64> LibraryView::selectedIds() const {

@@ -300,6 +300,8 @@ void DevelopView::requestRender() {
 
 void DevelopView::onRenderFinished() {
     const RenderOutput out = m_renderWatcher.result();
+    if (!m_record.id)
+        return; // the photo was closed while rendering
     if (out.cropMode == m_cropMode) {
         m_canvas->setImage(out.image);
         m_panel->setHistogram(out.histogram);
@@ -341,6 +343,24 @@ void DevelopView::commit() {
     // current (not mid-crop and not about to be re-rendered).
     if (!m_cropMode && !m_renderWatcher.isRunning() && !m_lastRender.isNull())
         m_thumbs->store(m_record, m_lastRender);
+}
+
+void DevelopView::closePhoto() {
+    m_commitTimer.stop();
+    ++m_loadGeneration; // a preview still loading is ignored when it arrives
+    m_cropMode = false;
+    m_cropButton->setChecked(false);
+    m_canvas->setCropMode(false);
+    m_record = PhotoRecord();
+    m_preview.reset();
+    m_lastRender = QImage();
+    m_history.clear();
+    m_historyIndex = -1;
+    updateUndoButtons();
+    m_canvas->setImage(QImage());
+    m_canvas->setBeforeImage(QImage());
+    m_canvas->setMessage(QString());
+    m_panel->setInfoCaption(QString());
 }
 
 void DevelopView::flush() {

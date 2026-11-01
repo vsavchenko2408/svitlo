@@ -29,6 +29,7 @@
 - Import whole folders (including subfolders) into a fast SQLite catalog
 - Star ratings (0–5), pick / reject flags, filters, search by file name or camera
 - Thumbnail grid with adjustable size, folder list, multi-selection
+- Remove a folder from the catalog (right-click it in the folder list); the files on disk are never touched
 - Copy and paste develop settings to many photos at once
 
 **Develop**
@@ -44,11 +45,14 @@
 
 **Export**
 - JPEG (adjustable quality), PNG and TIFF, optional resizing by long edge
-- Batch export in the background; existing files are never overwritten
+- Batch export in the background, several photos at once; existing files are never overwritten
+- To export many photos, select them in the Library (`⌘A` for all, `⇧`/`⌘`-click for a range or single photos) and press `⇧⌘E`
 
 **Non-destructive by design.** Edits live in the catalog and in a small sidecar file next to each photo (`IMG_0001.NEF.svitlo.json`), so they travel with your pictures.
 
 **Updates:** Svitlo can check GitHub for new versions at startup (at most once a day) and download the right installer for you. This sends a single anonymous request to `api.github.com` and nothing else; you can turn it off in **Help → Check for Updates at Startup**.
+
+**Appearance:** dark, light, or matching the system (switches live with it), in **View → Appearance**.
 
 **Languages:** English, Ukrainian, Danish, German and Polish. Svitlo follows your system language; you can change it in **View → Language**.
 
@@ -87,7 +91,8 @@
 | `←` / `→` | Previous / next photo |
 | `⌘Z` / `⇧⌘Z` | Undo / Redo |
 | `⇧⌘C` / `⇧⌘V` | Copy / paste settings |
-| `⇧⌘E` | Export |
+| `⌘A` | Select all photos (Library) |
+| `⇧⌘E` | Export the selected photos |
 | `⌘[` / `⌘]` | Rotate 90° |
 
 Double-click a slider's name to reset it.

@@ -106,11 +106,11 @@ QRectF ImageCanvas::cropWidgetRect() const {
 
 void ImageCanvas::paintEvent(QPaintEvent*) {
     QPainter p(this);
-    p.fillRect(rect(), theme::kCanvas);
+    p.fillRect(rect(), theme::colors().canvas);
 
     const QImage& img = (m_showBefore && !m_before.isNull()) ? m_before : m_image;
     if (img.isNull()) {
-        p.setPen(theme::kTextDim);
+        p.setPen(theme::colors().textDim);
         p.drawText(rect(), Qt::AlignCenter, m_message.isEmpty() ? tr("No photo selected") : m_message);
         return;
     }
@@ -125,7 +125,7 @@ void ImageCanvas::paintEvent(QPaintEvent*) {
         QPainterPath path;
         path.addRoundedRect(badge, 5, 5);
         p.fillPath(path, QColor(0, 0, 0, 150));
-        p.setPen(theme::kText);
+        p.setPen(QColor(0xDC, 0xDD, 0xDF)); // light text on the dark badge in both looks
         p.drawText(badge, Qt::AlignCenter, tr("Before"));
     }
 
@@ -148,11 +148,11 @@ void ImageCanvas::paintEvent(QPaintEvent*) {
         p.drawLine(QPointF(x, cr.top()), QPointF(x, cr.bottom()));
         p.drawLine(QPointF(cr.left(), y), QPointF(cr.right(), y));
     }
-    p.setPen(QPen(theme::kAccent, 1.5));
+    p.setPen(QPen(theme::colors().accent, 1.5));
     p.setBrush(Qt::NoBrush);
     p.drawRect(cr);
 
-    p.setPen(QPen(theme::kAccent, 3.5, Qt::SolidLine, Qt::SquareCap));
+    p.setPen(QPen(theme::colors().accent, 3.5, Qt::SolidLine, Qt::SquareCap));
     const double L = 14;
     auto corner = [&](QPointF c, double dx, double dy) {
         p.drawLine(c, c + QPointF(dx * L, 0));

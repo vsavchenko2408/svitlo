@@ -47,6 +47,8 @@ public:
 
     // Commit any in-progress edit (called before switching away).
     void flush();
+    // Forgets the open photo (e.g. after it was removed from the catalog).
+    void closePhoto();
 
 signals:
     void photoOpened(qint64 id);

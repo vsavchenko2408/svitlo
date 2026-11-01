@@ -17,11 +17,7 @@ CollapsibleSection::CollapsibleSection(const QString& title, bool expanded, QWid
     m_header->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     m_header->setMinimumWidth(0);
     m_header->setToolTip(title);
-    m_header->setStyleSheet(
-        "QToolButton { color: #8D9095; font-weight: 600; letter-spacing: 1px; text-align: left;"
-        " border: none; border-top: 1px solid #3A3C40; border-radius: 0; padding: 8px 2px; }"
-        "QToolButton:checked { background: transparent; color: #DCDDDF; }"
-        "QToolButton:hover { color: #E8A33D; }");
+    m_header->setObjectName("sectionHeader"); // styled in Theme.cpp
 
     m_content = new QWidget;
     m_contentLayout = new QVBoxLayout(m_content);

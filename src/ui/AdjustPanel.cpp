@@ -117,7 +117,7 @@ AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     auto* c = cropSection->contentLayout();
     auto* hint = new QLabel(tr("Press <b>C</b> or the Crop button to drag the frame."));
     hint->setWordWrap(true);
-    hint->setStyleSheet("color: #8D9095;");
+    hint->setProperty("dim", true);
     c->addWidget(hint);
 
     auto* aspectRow = new QHBoxLayout;

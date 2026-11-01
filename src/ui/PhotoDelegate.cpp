@@ -32,14 +32,15 @@ void PhotoDelegate::paint(QPainter* p, const QStyleOptionViewItem& opt, const QM
     const QRect cell = opt.rect.adjusted(2, 2, -2, -2);
 
     // Cell background.
-    QColor bg = theme::kPanel;
-    if (selected) bg = theme::kRaised.lighter(115);
-    else if (hovered) bg = theme::kRaised;
+    QColor bg = theme::colors().panel;
+    if (selected) bg = theme::colors().dark ? theme::colors().raised.lighter(115)
+                                            : theme::colors().raised.darker(108);
+    else if (hovered) bg = theme::colors().raised;
     QPainterPath bgPath;
     bgPath.addRoundedRect(cell, 6, 6);
     p->fillPath(bgPath, bg);
     if (selected) {
-        p->setPen(QPen(theme::kAccent, 1.5));
+        p->setPen(QPen(theme::colors().accent, 1.5));
         p->drawPath(bgPath);
     }
 
@@ -59,7 +60,7 @@ void PhotoDelegate::paint(QPainter* p, const QStyleOptionViewItem& opt, const QM
         p->drawImage(target, thumb);
         p->setOpacity(1.0);
     } else {
-        p->setPen(theme::kTextDim);
+        p->setPen(theme::colors().textDim);
         p->drawText(imageArea, Qt::AlignCenter, QStringLiteral("…"));
     }
 
@@ -68,7 +69,7 @@ void PhotoDelegate::paint(QPainter* p, const QStyleOptionViewItem& opt, const QM
         const QRect badge(imageArea.left() + 4, imageArea.top() + 4, 16, 16);
         QPainterPath path;
         path.addRoundedRect(badge, 4, 4);
-        p->fillPath(path, flag > 0 ? theme::kPick : theme::kReject);
+        p->fillPath(path, flag > 0 ? theme::colors().pick : theme::colors().reject);
         p->setPen(QPen(QColor(0x15, 0x16, 0x17), 2.0, Qt::SolidLine, Qt::RoundCap));
         if (flag > 0) {
             p->drawLine(badge.left() + 4, badge.center().y(), badge.center().x() - 1, badge.bottom() - 4);
@@ -82,7 +83,7 @@ void PhotoDelegate::paint(QPainter* p, const QStyleOptionViewItem& opt, const QM
     // "Edited" mark, top-right: a small accent dot.
     if (index.data(PhotoModel::EditedRole).toBool()) {
         p->setPen(Qt::NoPen);
-        p->setBrush(theme::kAccent);
+        p->setBrush(theme::colors().accent);
         p->drawEllipse(QPointF(imageArea.right() - 8, imageArea.top() + 8), 4, 4);
     }
 
@@ -93,10 +94,10 @@ void PhotoDelegate::paint(QPainter* p, const QStyleOptionViewItem& opt, const QM
         for (int i = 0; i < 5; ++i) {
             const QPointF c(footer.left() + 5 + i * 11, footer.center().y());
             p->setPen(Qt::NoPen);
-            p->setBrush(i < rating ? theme::kAccent : theme::kBorder);
+            p->setBrush(i < rating ? theme::colors().accent : theme::colors().border);
             p->drawEllipse(c, i < rating ? 3.5 : 2.0, i < rating ? 3.5 : 2.0);
         }
-        p->setPen(theme::kTextDim);
+        p->setPen(theme::colors().textDim);
         QFont f = opt.font;
         f.setPointSizeF(f.pointSizeF() * 0.85);
         p->setFont(f);

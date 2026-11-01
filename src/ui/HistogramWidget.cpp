@@ -29,7 +29,7 @@ void HistogramWidget::paintEvent(QPaintEvent*) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     const QRectF r = QRectF(rect()).adjusted(1, 1, -1, -18);
-    p.fillRect(rect(), theme::kCanvas);
+    p.fillRect(rect(), theme::colors().canvas);
 
     if (!m_hist.isEmpty()) {
         // Square-root scaling shows detail in sparse tones without letting a
@@ -63,13 +63,13 @@ void HistogramWidget::paintEvent(QPaintEvent*) {
             tri.lineTo(x + dir * 9, r.top() + 4);
             tri.lineTo(x, r.top() + 13);
             tri.closeSubpath();
-            p.fillPath(tri, lit ? (left ? QColor(90, 140, 255) : QColor(255, 90, 80)) : theme::kBorder);
+            p.fillPath(tri, lit ? (left ? QColor(90, 140, 255) : QColor(255, 90, 80)) : theme::colors().border);
         };
         indicator(true, m_hist.shadowClipFraction());
         indicator(false, m_hist.highlightClipFraction());
     }
 
-    p.setPen(theme::kTextDim);
+    p.setPen(theme::colors().textDim);
     QFont f = font();
     f.setPointSizeF(f.pointSizeF() * 0.85);
     p.setFont(f);

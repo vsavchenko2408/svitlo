@@ -39,7 +39,6 @@ QLabel* qrLabel(const QString& resource) {
 
 QFrame* card() {
     auto* f = new QFrame;
-    f->setStyleSheet("QFrame#card { background: #1E1F21; border: 1px solid #3A3C40; border-radius: 10px; }");
     f->setObjectName("card");
     return f;
 }
@@ -56,7 +55,7 @@ SupportDialog::SupportDialog(Mode mode, QWidget* parent) : QDialog(parent), m_mo
         "If it is useful to you, a small donation helps me keep improving it. "
         "Thank you! ♥"));
     text->setWordWrap(true);
-    text->setStyleSheet("color: #8D9095;");
+    text->setProperty("dim", true);
 
     // --- Ko-fi ---------------------------------------------------------------
     auto* kofi = card();
@@ -92,7 +91,8 @@ SupportDialog::SupportDialog(Mode mode, QWidget* parent) : QDialog(parent), m_mo
     auto* warning = new QLabel(tr("Send only BTC on the Bitcoin network.\n"
                                   "Other coins sent here will be lost."));
     warning->setAlignment(Qt::AlignCenter);
-    warning->setStyleSheet("color: #E8A33D; font-size: 11px;");
+    warning->setProperty("accent", true);
+    warning->setStyleSheet("font-size: 11px;");
     auto* copyButton = new QPushButton(tr("Copy address"));
     btcLayout->addWidget(btcTitle, 0, Qt::AlignHCenter);
     btcLayout->addWidget(qrLabel(":/support/qr-bitcoin.png"), 0, Qt::AlignHCenter);

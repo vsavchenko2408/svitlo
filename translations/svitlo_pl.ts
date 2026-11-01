@@ -3,12 +3,10 @@
 <context>
     <name>ImageLoader</name>
     <message>
-        <location filename="../src/core/ImageLoader.cpp" line="+189" />
         <source>Unsupported RAW output layout</source>
         <translation>Nieobsługiwany format danych RAW</translation>
     </message>
     <message>
-        <location line="+71" />
         <source>This build has no RAW support (LibRaw missing)</source>
         <translation>Ta wersja nie obsługuje RAW (brak LibRaw)</translation>
     </message>
@@ -16,17 +14,14 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/core/Exporter.cpp" line="+26" />
         <source>Cannot read %1: %2</source>
         <translation>Nie można odczytać %1: %2</translation>
     </message>
     <message>
-        <location line="+28" />
         <source>Processing failed</source>
         <translation>Przetwarzanie nie powiodło się</translation>
     </message>
     <message>
-        <location line="+6" />
         <source>Cannot create folder %1</source>
         <translation>Nie można utworzyć folderu %1</translation>
     </message>
@@ -416,7 +411,7 @@
 <context>
     <name>svitlo::LibraryView</name>
     <message>
-        <location filename="../src/ui/LibraryView.cpp" line="+32" />
+        <location filename="../src/ui/LibraryView.cpp" line="+35" />
         <source>FOLDERS</source>
         <translation>FOLDERY</translation>
     </message>
@@ -426,7 +421,27 @@
         <translation>Importuj folder…</translation>
     </message>
     <message>
-        <location line="+8" />
+        <location line="+15" />
+        <source>Show in Finder</source>
+        <translation>Pokaż w Finderze</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in Explorer</source>
+        <translation>Pokaż w Eksploratorze</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in File Manager</source>
+        <translation>Pokaż w menedżerze plików</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Usuń folder z katalogu…</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Search file name or camera</source>
         <translation>Szukaj nazwy pliku lub aparatu</translation>
     </message>
@@ -522,19 +537,19 @@
 <context>
     <name>svitlo::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="+69" />
-        <location line="+91" />
+        <location filename="../src/ui/MainWindow.cpp" line="+74" />
+        <location line="+116" />
         <source>Library</source>
         <translation>Biblioteka</translation>
     </message>
     <message>
-        <location line="-89" />
-        <location line="+90" />
+        <location line="-114" />
+        <location line="+115" />
         <source>Develop</source>
         <translation>Wywoływanie</translation>
     </message>
     <message>
-        <location line="-65" />
+        <location line="-89" />
         <source>Ready</source>
         <translation>Gotowe</translation>
     </message>
@@ -554,12 +569,22 @@
         <translation>Importuj folder…</translation>
     </message>
     <message>
-        <location line="+1" />
+        <location line="+2" />
         <source>Export…</source>
         <translation>Eksportuj…</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+2" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Usuń folder z katalogu…</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Select a folder in the Library's folder list first</source>
+        <translation>Najpierw wybierz folder na liście folderów Biblioteki</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Quit</source>
         <translation>Zakończ</translation>
     </message>
@@ -639,12 +664,17 @@
         <translation>Obróć w prawo</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+3" />
         <source>Remove from Catalog…</source>
         <translation>Usuń z katalogu…</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+4" />
+        <source>Open in Develop</source>
+        <translation>Otwórz w Wywoływaniu</translation>
+    </message>
+    <message>
+        <location line="+12" />
         <source>&amp;View</source>
         <translation>&amp;Widok</translation>
     </message>
@@ -675,17 +705,37 @@
     </message>
     <message>
         <location line="+4" />
-        <location line="+48" />
+        <location line="+67" />
         <source>Language</source>
         <translation>Język</translation>
     </message>
     <message>
-        <location line="-37" />
+        <location line="-56" />
         <source>System Default</source>
         <translation>Domyślny systemowy</translation>
     </message>
     <message>
-        <location line="+5" />
+        <location line="+6" />
+        <source>Appearance</source>
+        <translation>Wygląd</translation>
+    </message>
+    <message>
+        <location line="+13" />
+        <source>Match System</source>
+        <translation>Jak w systemie</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Dark</source>
+        <translation>Ciemny</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Light</source>
+        <translation>Jasny</translation>
+    </message>
+    <message>
+        <location line="+2" />
         <source>&amp;Help</source>
         <translation>Pomo&amp;c</translation>
     </message>
@@ -766,7 +816,7 @@
         <translation>Wybierz zdjęcia do eksportu</translation>
     </message>
     <message>
-        <location line="+18" />
+        <location line="+23" />
         <source>Exporting…</source>
         <translation>Eksportowanie…</translation>
     </message>
@@ -791,7 +841,7 @@
         <translation>Pokaż folder</translation>
     </message>
     <message>
-        <location line="+30" />
+        <location line="+28" />
         <source>Settings copied</source>
         <translation>Skopiowano ustawienia</translation>
     </message>
@@ -814,6 +864,31 @@ Pliki na dysku nie zostaną usunięte.</numerusform><numerusform>Usunąć %n zdj
 Pliki na dysku nie zostaną usunięte.</numerusform><numerusform>Usunąć %n zdjęć z katalogu?
 Pliki na dysku nie zostaną usunięte.</numerusform></translation>
     </message>
+    <message>
+        <location line="+11" />
+        <source>Remove folder from catalog</source>
+        <translation>Usuwanie folderu z katalogu</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1" />
+        <source>Remove “%1” and its %n photo(s) from the catalog?</source>
+        <translation><numerusform>Usunąć „%1” i %n zdjęcie z katalogu?</numerusform><numerusform>Usunąć „%1” i %n zdjęcia z katalogu?</numerusform><numerusform>Usunąć „%1” i %n zdjęć z katalogu?</numerusform></translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>The files on disk are not deleted. Your edits are kept in the .svitlo.json files next to the photos, so importing the folder again brings them back.</source>
+        <translation>Pliki na dysku nie zostaną usunięte. Twoje zmiany są zapisane w plikach .svitlo.json obok zdjęć, więc po ponownym zaimportowaniu folderu wrócą.</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Remove</source>
+        <translation>Usuń</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+12" />
+        <source>Removed %n photo(s) from the catalog</source>
+        <translation><numerusform>Usunięto %n zdjęcie z katalogu</numerusform><numerusform>Usunięto %n zdjęcia z katalogu</numerusform><numerusform>Usunięto %n zdjęć z katalogu</numerusform></translation>
+    </message>
 </context>
 <context>
     <name>svitlo::SliderRow</name>
@@ -826,7 +901,7 @@ Pliki na dysku nie zostaną usunięte.</numerusform></translation>
 <context>
     <name>svitlo::SupportDialog</name>
     <message>
-        <location filename="../src/ui/SupportDialog.cpp" line="+50" />
+        <location filename="../src/ui/SupportDialog.cpp" line="+49" />
         <source>Support Svitlo</source>
         <translation>Wesprzyj Svitlo</translation>
     </message>
@@ -868,7 +943,7 @@ Other coins sent here will be lost.</source>
 Inne monety wysłane tutaj zostaną utracone.</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+5" />
         <location line="+52" />
         <source>Copy address</source>
         <translation>Kopiuj adres</translation>

@@ -62,7 +62,7 @@ void ToneCurveWidget::paintEvent(QPaintEvent*) {
     p.setRenderHint(QPainter::Antialiasing);
     const QRectF r = plotRect();
 
-    p.fillRect(r, theme::kCanvas);
+    p.fillRect(r, theme::colors().canvas);
 
     // Luma histogram as a faint backdrop.
     if (!m_hist.isEmpty()) {
@@ -75,20 +75,24 @@ void ToneCurveWidget::paintEvent(QPaintEvent*) {
         }
         hist.lineTo(r.bottomRight());
         hist.closeSubpath();
-        p.fillPath(hist, QColor(255, 255, 255, 22));
+        {
+            QColor shade = theme::colors().text;
+            shade.setAlpha(theme::colors().dark ? 22 : 30);
+            p.fillPath(hist, shade);
+        }
     }
 
     // Quarter grid and the identity diagonal.
-    p.setPen(QPen(theme::kBorder, 1));
+    p.setPen(QPen(theme::colors().border, 1));
     for (int i = 1; i < 4; ++i) {
         const double x = r.left() + r.width() * i / 4.0;
         const double y = r.top() + r.height() * i / 4.0;
         p.drawLine(QPointF(x, r.top()), QPointF(x, r.bottom()));
         p.drawLine(QPointF(r.left(), y), QPointF(r.right(), y));
     }
-    p.setPen(QPen(theme::kBorder, 1, Qt::DashLine));
+    p.setPen(QPen(theme::colors().border, 1, Qt::DashLine));
     p.drawLine(r.bottomLeft(), r.topRight());
-    p.setPen(QPen(theme::kBorder, 1));
+    p.setPen(QPen(theme::colors().border, 1));
     p.setBrush(Qt::NoBrush);
     p.drawRect(r);
 
@@ -101,13 +105,13 @@ void ToneCurveWidget::paintEvent(QPaintEvent*) {
         const QPointF w = toWidget(QPointF(x, curve.evaluate(x)));
         i == 0 ? path.moveTo(w) : path.lineTo(w);
     }
-    p.setPen(QPen(theme::kText, 1.6));
+    p.setPen(QPen(theme::colors().text, 1.6));
     p.drawPath(path);
 
     for (int i = 0; i < m_points.size(); ++i) {
         const QPointF w = toWidget(m_points[i]);
-        p.setPen(QPen(theme::kText, 1.2));
-        p.setBrush(i == m_drag ? theme::kAccent : theme::kCanvas);
+        p.setPen(QPen(theme::colors().text, 1.2));
+        p.setBrush(i == m_drag ? theme::colors().accent : theme::colors().canvas);
         p.drawEllipse(w, 4.5, 4.5);
     }
 }

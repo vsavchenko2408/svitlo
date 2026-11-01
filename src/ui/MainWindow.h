@@ -45,6 +45,8 @@ private:
     void rotateSelection(int delta);
     void removeSelection();
     void changeLanguage(const QString& code);
+    void removeFolder(const QString& folder);
+    void forgetRemoved(const QVector<qint64>& ids);
 
     Catalog* m_catalog;
     ThumbnailCache* m_thumbs;

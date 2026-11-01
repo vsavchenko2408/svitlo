@@ -9,7 +9,11 @@ if(CMAKE_HOST_APPLE AND NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version")
 endif()
 
-project(Svitlo VERSION 0.2.0 LANGUAGES CXX)
+project(Svitlo VERSION 0.3.0 LANGUAGES CXX)
+if(APPLE)
+    # One small Objective-C++ file (src/ui/MacAppearance.mm) for the window appearance.
+    enable_language(OBJCXX)
+endif()
 
 # Svitlo — a free, open-source photo library and non-destructive photo editor.
 # Targets: macOS 12+ (Qt 6.5), Linux, Windows 10+.
@@ -125,6 +129,9 @@ set(APP_SOURCES
     src/ui/SupportDialog.h           src/ui/SupportDialog.cpp
     src/ui/LicensesDialog.h          src/ui/LicensesDialog.cpp
 )
+if(APPLE)
+    list(APPEND APP_SOURCES src/ui/MacAppearance.mm)
+endif()
 
 # App icon: Svitlo.icns goes into the bundle's Resources folder (Finder/Dock),
 # svitlo.png is compiled in via Qt resources (window icon on Linux/Windows).
@@ -159,6 +166,9 @@ endif()
 add_executable(Svitlo WIN32 MACOSX_BUNDLE ${APP_SOURCES} resources/resources.qrc ${APP_ICON_MACOS}
                ${APP_LICENSE_FILES} ${APP_WINDOWS_RC})
 target_link_libraries(Svitlo PRIVATE svitlo_core Qt6::Widgets Qt6::Sql Qt6::Network)
+if(APPLE)
+    target_link_libraries(Svitlo PRIVATE "-framework AppKit")
+endif()
 target_compile_definitions(Svitlo PRIVATE SVITLO_VERSION="${PROJECT_VERSION}")
 
 # ---------------------------------------------------------- translations ----

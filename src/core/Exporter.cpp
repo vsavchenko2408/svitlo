@@ -18,8 +18,26 @@ QStringList Exporter::availableFormats() {
     return formats;
 }
 
+QString Exporter::reserveTargetPath(const QString& sourcePath, const ExportOptions& options,
+                                   QSet<QString>* reserved) {
+    const QDir dir(options.outputDir);
+    const QString base = QFileInfo(sourcePath).completeBaseName() + options.fileSuffix;
+    // macOS and Windows file names are case-insensitive: "IMG.jpg" and
+    // "img.jpg" are the same file there, so compare in lower case.
+    auto taken = [reserved](const QString& path) {
+        return QFileInfo::exists(path) || (reserved && reserved->contains(path.toLower()));
+    };
+    QString target = dir.filePath(base + '.' + options.format);
+    for (int n = 2; taken(target); ++n)
+        target = dir.filePath(QStringLiteral("%1_%2.%3").arg(base).arg(n).arg(options.format));
+    if (reserved)
+        reserved->insert(target.toLower());
+    return target;
+}
+
 bool Exporter::exportPhoto(const QString& sourcePath, const EditSettings& settings,
-                           const ExportOptions& options, QString* writtenPath, QString* error) {
+                           const ExportOptions& options, QString* writtenPath, QString* error,
+                           const QString& targetPath) {
     QString loadError;
     const ImageBuffer full = ImageLoader::load(sourcePath, ImageLoader::Quality::Full, 0, &loadError);
     if (full.isNull()) {
@@ -61,10 +79,7 @@ bool Exporter::exportPhoto(const QString& sourcePath, const EditSettings& settin
         return false;
     }
 
-    const QString base = QFileInfo(sourcePath).completeBaseName() + options.fileSuffix;
-    QString target = dir.filePath(base + '.' + options.format);
-    for (int n = 2; QFileInfo::exists(target); ++n)
-        target = dir.filePath(QStringLiteral("%1_%2.%3").arg(base).arg(n).arg(options.format));
+    const QString target = targetPath.isEmpty() ? reserveTargetPath(sourcePath, options, nullptr) : targetPath;
 
     QImageWriter writer(target, options.format == "tif" ? QByteArray("tiff") : options.format.toLatin1());
     if (options.format == "jpg")

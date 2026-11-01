@@ -37,10 +37,8 @@ SliderRow::SliderRow(const QString& label, double min, double max, double defaul
     // computed from the actual font.
     m_field = new QLineEdit;
     m_field->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    m_field->setStyleSheet(QStringLiteral(
-        "QLineEdit { background: #1E1F21; color: #DCDDDF; border: 1px solid #3A3C40;"
-        " border-radius: 4px; padding: 0px 4px; margin: 0px; }"
-        "QLineEdit:focus { border-color: #E8A33D; }"));
+    // Geometry only; colours come from the application theme (Theme.cpp).
+    m_field->setStyleSheet(QStringLiteral("QLineEdit { border-radius: 4px; padding: 0px 4px; margin: 0px; }"));
     auto* validator = new QDoubleValidator(min, max, decimals, m_field);
     validator->setNotation(QDoubleValidator::StandardNotation);
     validator->setLocale(QLocale::c()); // always "." as decimal separator

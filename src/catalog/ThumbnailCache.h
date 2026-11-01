@@ -29,6 +29,9 @@ public:
     // Replace the thumbnail directly (e.g. from the develop preview).
     void store(const PhotoRecord& rec, const QImage& image);
 
+    // Deletes the cached thumbnails of photos removed from the catalog.
+    void forget(const QVector<qint64>& ids);
+
 signals:
     void thumbnailReady(qint64 id);
     void infoAvailable(qint64 id, const svitlo::ImageInfo& info);

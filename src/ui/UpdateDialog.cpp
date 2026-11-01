@@ -28,7 +28,7 @@ UpdateDialog::UpdateDialog(const update::ReleaseInfo& info, QWidget* parent)
     auto* title = new QLabel(tr("<span style='font-size:17px; font-weight:600'>Svitlo %1 is available</span>")
                                  .arg(info.version));
     auto* current = new QLabel(tr("You have version %1.").arg(QApplication::applicationVersion()));
-    current->setStyleSheet("color: #8D9095;");
+    current->setProperty("dim", true);
 
     auto* notes = new QTextBrowser;
     notes->setOpenExternalLinks(true);
@@ -38,7 +38,7 @@ UpdateDialog::UpdateDialog(const update::ReleaseInfo& info, QWidget* parent)
     m_progress->setVisible(false);
     m_status = new QLabel;
     m_status->setWordWrap(true);
-    m_status->setStyleSheet("color: #8D9095;");
+    m_status->setProperty("dim", true);
 
     auto* skip = new QPushButton(tr("Skip This Version"));
     auto* later = new QPushButton(tr("Remind Me Later"));

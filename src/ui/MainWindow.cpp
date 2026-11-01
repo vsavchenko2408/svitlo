@@ -11,6 +11,7 @@
 #include "ui/Language.h"
 #include "ui/LibraryView.h"
 #include "ui/PhotoModel.h"
+#include "ui/Theme.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -26,7 +27,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
-#include <QPromise>
+#include <QDir>
 #include <QPushButton>
 #include <QSettings>
 #include <QStackedWidget>
@@ -34,7 +35,11 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QUrl>
-#include <QtConcurrent/QtConcurrentRun>
+#include <QThread>
+#include <QThreadPool>
+#include <QtConcurrent/QtConcurrentMap>
+
+#include <algorithm>
 
 namespace svitlo {
 
@@ -57,8 +62,8 @@ MainWindow::MainWindow(Catalog* catalog, ThumbnailCache* thumbs, QWidget* parent
     auto* top = new QToolBar;
     top->setMovable(false);
     top->setFloatable(false);
-    auto* brand = new QLabel(QStringLiteral("<span style='color:#E8A33D;font-size:16px;font-weight:600'>"
-                                            "Svitlo</span>"));
+    auto* brand = new QLabel(QStringLiteral("Svitlo"));
+    brand->setObjectName("brand"); // styled in Theme.cpp
     brand->setContentsMargins(10, 0, 10, 0);
     top->addWidget(brand);
     auto* spacer = new QWidget;
@@ -86,6 +91,7 @@ MainWindow::MainWindow(Catalog* catalog, ThumbnailCache* thumbs, QWidget* parent
         showModule(Module::Develop);
     });
     connect(m_library, &LibraryView::importRequested, this, &MainWindow::importFolder);
+    connect(m_library, &LibraryView::removeFolderRequested, this, &MainWindow::removeFolder);
     connect(m_develop, &DevelopView::photoOpened, m_library, &LibraryView::selectId);
     connect(m_develop, &DevelopView::exportRequested, this, &MainWindow::exportPhotos);
     connect(m_develop, &DevelopView::copySettingsRequested, this, &MainWindow::copySettings);
@@ -113,7 +119,16 @@ void MainWindow::buildMenus() {
 
     QMenu* file = menuBar()->addMenu(tr("&File"));
     add(file, tr("Import Folder…"), QKeySequence(QStringLiteral("Ctrl+Shift+I")), [this] { importFolder(); });
-    add(file, tr("Export…"), QKeySequence(QStringLiteral("Ctrl+Shift+E")), [this] { exportPhotos(); });
+    QAction* exportAction =
+        add(file, tr("Export…"), QKeySequence(QStringLiteral("Ctrl+Shift+E")), [this] { exportPhotos(); });
+    file->addSeparator();
+    add(file, tr("Remove Folder from Catalog…"), QKeySequence(), [this] {
+        const QString folder = m_library->currentFolder();
+        if (folder.isEmpty() || inDevelop())
+            statusBar()->showMessage(tr("Select a folder in the Library's folder list first"), 5000);
+        else
+            removeFolder(folder);
+    });
     file->addSeparator();
     // Explicit roles: on macOS Qt otherwise guesses from the (English) text,
     // which fails once the menu is translated.
@@ -154,7 +169,22 @@ void MainWindow::buildMenus() {
     add(photo, tr("Rotate Left"), QKeySequence(QStringLiteral("Ctrl+[")), [this] { rotateSelection(-1); });
     add(photo, tr("Rotate Right"), QKeySequence(QStringLiteral("Ctrl+]")), [this] { rotateSelection(1); });
     photo->addSeparator();
-    add(photo, tr("Remove from Catalog…"), QKeySequence(Qt::Key_Backspace), [this] { removeSelection(); });
+    QAction* removeAction =
+        add(photo, tr("Remove from Catalog…"), QKeySequence(Qt::Key_Backspace), [this] { removeSelection(); });
+
+    // Right-click menu of the thumbnail grid.
+    QListView* grid = m_library->grid();
+    auto* openAction = new QAction(tr("Open in Develop"), grid);
+    connect(openAction, &QAction::triggered, this, [this] {
+        if (const qint64 id = m_library->currentId()) {
+            m_develop->openPhoto(id);
+            showModule(Module::Develop);
+        }
+    });
+    auto* separator = new QAction(grid);
+    separator->setSeparator(true);
+    grid->setContextMenuPolicy(Qt::ActionsContextMenu);
+    grid->addActions({openAction, exportAction, separator, removeAction});
 
     QMenu* view = menuBar()->addMenu(tr("&View"));
     add(view, tr("Library"), QKeySequence("G"), [this] { showModule(Module::Library); });
@@ -187,6 +217,25 @@ void MainWindow::buildMenus() {
     langMenu->addSeparator();
     for (const language::Info& l : language::supported())
         addLang(l.code, l.nativeName);
+
+    // Appearance: switches immediately, "System" follows the OS live.
+    QMenu* themeMenu = view->addMenu(tr("Appearance"));
+    auto* themeGroup = new QActionGroup(this);
+    auto addTheme = [&](theme::Mode mode, const QString& name) {
+        QAction* a = themeMenu->addAction(name);
+        a->setCheckable(true);
+        a->setChecked(mode == theme::savedMode());
+        a->setMenuRole(QAction::NoRole);
+        themeGroup->addAction(a);
+        connect(a, &QAction::triggered, this, [mode] {
+            theme::saveMode(mode);
+            theme::apply(*qApp);
+        });
+    };
+    addTheme(theme::Mode::System, tr("Match System"));
+    themeMenu->addSeparator();
+    addTheme(theme::Mode::Dark, tr("Dark"));
+    addTheme(theme::Mode::Light, tr("Light"));
 
     QMenu* help = menuBar()->addMenu(tr("&Help"));
     add(help, tr("Support Svitlo…"), QKeySequence(), [this] {
@@ -298,11 +347,16 @@ void MainWindow::exportPhotos() {
     struct Job {
         QString path;
         EditSettings settings;
+        QString target;
     };
+    // Output names are chosen up front: photos are exported in parallel, and
+    // two photos called e.g. DSC_0001 must not end up in the same file.
     QVector<Job> jobs;
+    QSet<QString> reserved;
     for (qint64 id : ids) {
         const PhotoRecord r = m_catalog->photo(id);
-        jobs.append({r.path, EditSettings::fromJsonString(r.settingsJson)});
+        jobs.append({r.path, EditSettings::fromJsonString(r.settingsJson),
+                     Exporter::reserveTargetPath(r.path, opt, &reserved)});
     }
 
     auto* progress = new QProgressDialog(tr("Exporting…"), tr("Cancel"), 0, jobs.size(), this);
@@ -334,19 +388,17 @@ void MainWindow::exportPhotos() {
             QDesktopServices::openUrl(QUrl::fromLocalFile(opt.outputDir));
     });
 
-    watcher->setFuture(QtConcurrent::run([jobs, opt](QPromise<QString>& promise) {
-        promise.setProgressRange(0, jobs.size());
-        int done = 0;
-        for (const Job& job : jobs) {
-            if (promise.isCanceled())
-                return;
-            QString written, error;
-            if (Exporter::exportPhoto(job.path, job.settings, opt, &written, &error))
-                promise.addResult(written);
-            else
-                promise.addResult("ERR:" + error);
-            promise.setProgressValue(++done);
-        }
+    // Several photos at once. Each one already uses all cores for the
+    // adjustments, but decoding a RAW file and writing the JPEG run on one
+    // core, so exporting 2-3 photos side by side is much faster. More would
+    // mostly cost memory: a full-size RAW needs several hundred MB.
+    auto* pool = new QThreadPool(watcher);
+    pool->setMaxThreadCount(std::clamp(QThread::idealThreadCount() / 2, 1, 3));
+    watcher->setFuture(QtConcurrent::mapped(pool, jobs, [opt](const Job& job) {
+        QString written, error;
+        if (Exporter::exportPhoto(job.path, job.settings, opt, &written, &error, job.target))
+            return written;
+        return QStringLiteral("ERR:") + error;
     }));
 }
 
@@ -410,8 +462,41 @@ void MainWindow::removeSelection() {
     const auto answer = QMessageBox::question(
         this, tr("Remove from catalog"),
         tr("Remove %n photo(s) from the catalog?\nThe files on disk are not deleted.", "", ids.size()));
-    if (answer == QMessageBox::Yes)
+    if (answer == QMessageBox::Yes) {
         m_catalog->remove(ids);
+        forgetRemoved(ids);
+    }
+}
+
+void MainWindow::removeFolder(const QString& folder) {
+    const QVector<qint64> ids = m_catalog->photosInFolder(folder);
+    QMessageBox box(this);
+    box.setIcon(QMessageBox::Question);
+    box.setWindowTitle(tr("Remove folder from catalog"));
+    box.setText(tr("Remove “%1” and its %n photo(s) from the catalog?", "", ids.size())
+                    .arg(QDir(folder).dirName()));
+    box.setInformativeText(tr("The files on disk are not deleted. Your edits are kept in the "
+                              ".svitlo.json files next to the photos, so importing the folder "
+                              "again brings them back."));
+    QPushButton* remove = box.addButton(tr("Remove"), QMessageBox::DestructiveRole);
+    box.addButton(QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Cancel);
+    box.exec();
+    if (box.clickedButton() != remove)
+        return;
+
+    m_develop->flush(); // a pending edit is saved to its sidecar first
+    if (m_model->folder() == folder)
+        m_model->setFolder(QString()); // show "All Photographs" afterwards
+    m_catalog->remove(ids);
+    forgetRemoved(ids);
+    statusBar()->showMessage(tr("Removed %n photo(s) from the catalog", "", ids.size()), 5000);
+}
+
+void MainWindow::forgetRemoved(const QVector<qint64>& ids) {
+    if (ids.contains(m_develop->currentPhotoId()))
+        m_develop->closePhoto();
+    m_thumbs->forget(ids);
 }
 
 void MainWindow::closeEvent(QCloseEvent* e) {

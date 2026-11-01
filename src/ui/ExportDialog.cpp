@@ -56,7 +56,7 @@ ExportDialog::ExportDialog(int photoCount, QWidget* parent) : QDialog(parent) {
     form->addRow(tr("File name suffix"), m_suffix);
 
     auto* info = new QLabel(tr("Exporting %n photo(s). Originals are not modified.", "", photoCount));
-    info->setStyleSheet("color: #8D9095;");
+    info->setProperty("dim", true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     buttons->button(QDialogButtonBox::Ok)->setText(tr("Export"));

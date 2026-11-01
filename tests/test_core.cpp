@@ -14,6 +14,8 @@
 #include <QDir>
 #include <QImage>
 #include <QTemporaryDir>
+#include <QThreadPool>
+#include <QtConcurrent/QtConcurrentMap>
 
 #include <cmath>
 #include <cstdio>
@@ -176,6 +178,52 @@ static void testExport() {
     CHECK(second != written);
 }
 
+static void testBatchExportNames() {
+    // Two different photos with the same file name (from two folders) and
+    // an existing file in the output folder: every photo gets its own file,
+    // also when they are exported in parallel.
+    QTemporaryDir dir;
+    CHECK(dir.isValid());
+    QDir(dir.path()).mkpath("a");
+    QDir(dir.path()).mkpath("b");
+    QDir(dir.path()).mkpath("out");
+    const QString srcA = dir.filePath("a/IMG.png");
+    const QString srcB = dir.filePath("b/img.png"); // same name apart from case
+    const QString srcC = dir.filePath("a/other.png");
+    CHECK(gradientImage(120, 80).save(srcA));
+    CHECK(gradientImage(80, 120).save(srcB));
+    CHECK(gradientImage(100, 100).save(srcC));
+
+    ExportOptions opt;
+    opt.outputDir = dir.filePath("out");
+    opt.format = "png";
+    CHECK(gradientImage(10, 10).save(dir.filePath("out/other.png"))); // already there
+
+    QSet<QString> reserved;
+    const QString tA = Exporter::reserveTargetPath(srcA, opt, &reserved);
+    const QString tB = Exporter::reserveTargetPath(srcB, opt, &reserved);
+    const QString tC = Exporter::reserveTargetPath(srcC, opt, &reserved);
+    CHECK(tA.endsWith("/IMG.png"));
+    CHECK(tB.endsWith("/img_2.png"));
+    CHECK(tC.endsWith("/other_2.png"));
+
+    struct Job { QString src, target; };
+    const QVector<Job> jobs = {{srcA, tA}, {srcB, tB}, {srcC, tC}};
+    QThreadPool pool;
+    pool.setMaxThreadCount(3);
+    const QList<QString> results =
+        QtConcurrent::blockingMapped<QList<QString>>(&pool, jobs, [&opt](const Job& j) {
+            QString written, error;
+            return Exporter::exportPhoto(j.src, EditSettings{}, opt, &written, &error, j.target)
+                       ? written : QString();
+        });
+    CHECK(results.size() == 3);
+    CHECK(results.value(0) == tA && results.value(1) == tB && results.value(2) == tC);
+    CHECK(QImage(tA).size() == QSize(120, 80));
+    CHECK(QImage(tB).size() == QSize(80, 120));
+    CHECK(QImage(tC).size() == QSize(100, 100));
+    CHECK(QImage(dir.filePath("out/other.png")).size() == QSize(10, 10)); // not overwritten
+}
 
 static void testRawBaseLook() {
     // Left half dark grey, right half light grey.
@@ -249,6 +297,7 @@ int main(int argc, char** argv) {
     testSettingsJson();
     testHistogram();
     testExport();
+    testBatchExportNames();
     testRawBaseLook();
     testUpdateInfo();
     if (g_failures) {

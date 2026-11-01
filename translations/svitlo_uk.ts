@@ -3,12 +3,10 @@
 <context>
     <name>ImageLoader</name>
     <message>
-        <location filename="../src/core/ImageLoader.cpp" line="+189" />
         <source>Unsupported RAW output layout</source>
         <translation>Непідтримуваний формат даних RAW</translation>
     </message>
     <message>
-        <location line="+71" />
         <source>This build has no RAW support (LibRaw missing)</source>
         <translation>Ця збірка не підтримує RAW (немає LibRaw)</translation>
     </message>
@@ -16,17 +14,14 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/core/Exporter.cpp" line="+26" />
         <source>Cannot read %1: %2</source>
         <translation>Не вдалося прочитати %1: %2</translation>
     </message>
     <message>
-        <location line="+28" />
         <source>Processing failed</source>
         <translation>Помилка обробки</translation>
     </message>
     <message>
-        <location line="+6" />
         <source>Cannot create folder %1</source>
         <translation>Не вдалося створити папку %1</translation>
     </message>
@@ -416,7 +411,7 @@
 <context>
     <name>svitlo::LibraryView</name>
     <message>
-        <location filename="../src/ui/LibraryView.cpp" line="+32" />
+        <location filename="../src/ui/LibraryView.cpp" line="+35" />
         <source>FOLDERS</source>
         <translation>ПАПКИ</translation>
     </message>
@@ -426,7 +421,27 @@
         <translation>Імпортувати папку…</translation>
     </message>
     <message>
-        <location line="+8" />
+        <location line="+15" />
+        <source>Show in Finder</source>
+        <translation>Показати у Finder</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in Explorer</source>
+        <translation>Показати в Провіднику</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Show in File Manager</source>
+        <translation>Показати у файловому менеджері</translation>
+    </message>
+    <message>
+        <location line="+5" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Видалити папку з каталогу…</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Search file name or camera</source>
         <translation>Пошук за назвою файлу або камерою</translation>
     </message>
@@ -522,19 +537,19 @@
 <context>
     <name>svitlo::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="+69" />
-        <location line="+91" />
+        <location filename="../src/ui/MainWindow.cpp" line="+74" />
+        <location line="+116" />
         <source>Library</source>
         <translation>Бібліотека</translation>
     </message>
     <message>
-        <location line="-89" />
-        <location line="+90" />
+        <location line="-114" />
+        <location line="+115" />
         <source>Develop</source>
         <translation>Обробка</translation>
     </message>
     <message>
-        <location line="-65" />
+        <location line="-89" />
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
@@ -554,12 +569,22 @@
         <translation>Імпортувати папку…</translation>
     </message>
     <message>
-        <location line="+1" />
+        <location line="+2" />
         <source>Export…</source>
         <translation>Експорт…</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+2" />
+        <source>Remove Folder from Catalog…</source>
+        <translation>Видалити папку з каталогу…</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Select a folder in the Library's folder list first</source>
+        <translation>Спершу виберіть папку в списку папок Бібліотеки</translation>
+    </message>
+    <message>
+        <location line="+7" />
         <source>Quit</source>
         <translation>Вийти</translation>
     </message>
@@ -639,12 +664,17 @@
         <translation>Повернути праворуч</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+3" />
         <source>Remove from Catalog…</source>
         <translation>Видалити з каталогу…</translation>
     </message>
     <message>
-        <location line="+2" />
+        <location line="+4" />
+        <source>Open in Develop</source>
+        <translation>Відкрити в Обробці</translation>
+    </message>
+    <message>
+        <location line="+12" />
         <source>&amp;View</source>
         <translation>&amp;Вигляд</translation>
     </message>
@@ -675,17 +705,37 @@
     </message>
     <message>
         <location line="+4" />
-        <location line="+48" />
+        <location line="+67" />
         <source>Language</source>
         <translation>Мова</translation>
     </message>
     <message>
-        <location line="-37" />
+        <location line="-56" />
         <source>System Default</source>
         <translation>Як у системі</translation>
     </message>
     <message>
-        <location line="+5" />
+        <location line="+6" />
+        <source>Appearance</source>
+        <translation>Оформлення</translation>
+    </message>
+    <message>
+        <location line="+13" />
+        <source>Match System</source>
+        <translation>Як у системі</translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>Dark</source>
+        <translation>Темне</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Light</source>
+        <translation>Світле</translation>
+    </message>
+    <message>
+        <location line="+2" />
         <source>&amp;Help</source>
         <translation>&amp;Довідка</translation>
     </message>
@@ -766,7 +816,7 @@
         <translation>Виберіть фото для експорту</translation>
     </message>
     <message>
-        <location line="+18" />
+        <location line="+23" />
         <source>Exporting…</source>
         <translation>Експорт…</translation>
     </message>
@@ -791,7 +841,7 @@
         <translation>Показати папку</translation>
     </message>
     <message>
-        <location line="+30" />
+        <location line="+28" />
         <source>Settings copied</source>
         <translation>Налаштування скопійовано</translation>
     </message>
@@ -814,6 +864,31 @@ The files on disk are not deleted.</source>
 Файли на диску не видаляються.</numerusform><numerusform>Видалити %n фото з каталогу?
 Файли на диску не видаляються.</numerusform></translation>
     </message>
+    <message>
+        <location line="+11" />
+        <source>Remove folder from catalog</source>
+        <translation>Видалення папки з каталогу</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1" />
+        <source>Remove “%1” and its %n photo(s) from the catalog?</source>
+        <translation><numerusform>Видалити «%1» і %n фото з каталогу?</numerusform><numerusform>Видалити «%1» і %n фото з каталогу?</numerusform><numerusform>Видалити «%1» і %n фото з каталогу?</numerusform></translation>
+    </message>
+    <message>
+        <location line="+2" />
+        <source>The files on disk are not deleted. Your edits are kept in the .svitlo.json files next to the photos, so importing the folder again brings them back.</source>
+        <translation>Файли на диску не видаляються. Ваші зміни зберігаються у файлах .svitlo.json поруч із фото, тож якщо імпортувати папку знову, вони повернуться.</translation>
+    </message>
+    <message>
+        <location line="+3" />
+        <source>Remove</source>
+        <translation>Видалити</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+12" />
+        <source>Removed %n photo(s) from the catalog</source>
+        <translation><numerusform>Видалено %n фото з каталогу</numerusform><numerusform>Видалено %n фото з каталогу</numerusform><numerusform>Видалено %n фото з каталогу</numerusform></translation>
+    </message>
 </context>
 <context>
     <name>svitlo::SliderRow</name>
@@ -826,7 +901,7 @@ The files on disk are not deleted.</source>
 <context>
     <name>svitlo::SupportDialog</name>
     <message>
-        <location filename="../src/ui/SupportDialog.cpp" line="+50" />
+        <location filename="../src/ui/SupportDialog.cpp" line="+49" />
         <source>Support Svitlo</source>
         <translation>Підтримати Svitlo</translation>
     </message>
@@ -868,7 +943,7 @@ Other coins sent here will be lost.</source>
 Інші монети, надіслані сюди, буде втрачено.</translation>
     </message>
     <message>
-        <location line="+4" />
+        <location line="+5" />
         <location line="+52" />
         <source>Copy address</source>
         <translation>Копіювати адресу</translation>

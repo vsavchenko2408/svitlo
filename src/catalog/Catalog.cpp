@@ -233,6 +233,17 @@ void Catalog::remove(const QVector<qint64>& ids) {
     emit photosRemoved();
 }
 
+QVector<qint64> Catalog::photosInFolder(const QString& folder) const {
+    QVector<qint64> ids;
+    QSqlQuery q(m_db);
+    q.prepare("SELECT id FROM photos WHERE folder = ?");
+    q.addBindValue(folder);
+    if (q.exec())
+        while (q.next())
+            ids.append(q.value(0).toLongLong());
+    return ids;
+}
+
 QString Catalog::sidecarPath(const QString& photoPath) { return photoPath + ".svitlo.json"; }
 
 } // namespace svitlo

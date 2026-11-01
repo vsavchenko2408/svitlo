@@ -24,10 +24,13 @@ public:
     qint64 currentId() const;
     void selectId(qint64 id);
     void refreshFolders();
+    // Folder selected in the folder list; empty for "All Photographs".
+    QString currentFolder() const;
 
 signals:
     void openInDevelop(qint64 id);
     void importRequested();
+    void removeFolderRequested(const QString& folder);
 
 private:
     PhotoModel* m_model;
