@@ -5,6 +5,7 @@
 #include <QRectF>
 #include <QString>
 #include <QVector>
+#include <array>
 
 namespace svitlo {
 
@@ -30,6 +31,12 @@ struct EditSettings {
     double clarity = 0.0;     // -100..100 (local contrast)
     double vibrance = 0.0;    // -100..100
     double saturation = 0.0;  // -100..100
+    
+    // Colour mixer (HSL)
+    // 0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - light blue, 5 - blue, 6 - purple, 7 - magenta
+    std::array<double, 8> hslHue{};         // -100..100
+    std::array<double, 8> hslSaturation{};  // -100..100
+    std::array<double, 8> hslLuminance{};   // -100..100
 
     // Tone curve: control points in [0,1]x[0,1], sorted by x, endpoints
     // included. The identity curve is {(0,0),(1,1)}.

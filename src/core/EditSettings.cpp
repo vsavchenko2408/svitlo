@@ -19,6 +19,29 @@ double clampField(const QJsonObject& o, const char* key, double def, double lo, 
     return std::clamp(v.toDouble(), lo, hi);
 }
 
+QJsonArray toJsonArray(const std::array<double,8>& values)
+{
+    QJsonArray result;
+    for(double v : values)
+    {
+        result.append(v);
+    }
+    return result;
+}
+
+std::array<double, 8> fromJsonArray(const QJsonObject& o, const char* key) {
+    std::array<double, 8> result{};                                             
+    const QJsonArray arr = o.value(QLatin1String(key)).toArray();  
+
+    if (arr.size() != 8)                                        
+        return result;
+
+    for (int i = 0; i < 8; ++i)
+        result[i] = std::clamp(arr[i].toDouble(), -100.0, 100.0);  
+
+    return result;
+}
+
 } // namespace
 
 bool EditSettings::curveIsIdentity() const {
@@ -46,7 +69,8 @@ bool EditSettings::operator==(const EditSettings& o) const {
            nearlyEqual(vignetteMidpoint, o.vignetteMidpoint) && monochrome == o.monochrome &&
            rawProfile == o.rawProfile &&
            nearlyEqual(rotation, o.rotation) && crop == o.crop &&
-           orientationQuarterTurns == o.orientationQuarterTurns;
+           orientationQuarterTurns == o.orientationQuarterTurns && 
+           hslHue == o.hslHue && hslSaturation == o.hslSaturation && hslLuminance == o.hslLuminance;
 }
 
 QJsonObject EditSettings::toJson() const {
@@ -63,6 +87,9 @@ QJsonObject EditSettings::toJson() const {
     o["clarity"] = clarity;
     o["vibrance"] = vibrance;
     o["saturation"] = saturation;
+    o["hslHue"] = toJsonArray(hslHue);
+    o["hslLuminance"] = toJsonArray(hslLuminance);
+    o["hslSaturation"] = toJsonArray(hslSaturation);
 
     QJsonArray pts;
     for (const QPointF& p : curve)
@@ -94,7 +121,10 @@ EditSettings EditSettings::fromJson(const QJsonObject& o) {
     s.clarity = clampField(o, "clarity", 0, -100, 100);
     s.vibrance = clampField(o, "vibrance", 0, -100, 100);
     s.saturation = clampField(o, "saturation", 0, -100, 100);
-
+    s.hslHue = fromJsonArray(o, "hslHue");
+    s.hslSaturation = fromJsonArray(o, "hslSaturation");
+    s.hslLuminance = fromJsonArray(o, "hslLuminance");
+    
     const QJsonArray pts = o.value("curve").toArray();
     if (pts.size() >= 2) {
         QVector<QPointF> curve;
