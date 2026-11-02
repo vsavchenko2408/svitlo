@@ -33,4 +33,50 @@ inline float linearToSrgb(float v) {
     return v <= 0.0031308f ? v * 12.92f : 1.055f * std::pow(v, 1.0f / 2.4f) - 0.055f;
 }
 
+// Hue of a colour in degrees, 0..360 (0 = red, 120 = green, 240 = blue).
+// Grey has no hue: returns 0.
+inline float hueOf(float r, float g, float b) {
+    const float mx = std::max({r,g,b});
+    const float mn = std::min({r,g,b});
+    const float d = mx - mn;
+
+    if(d <= 0.0f)
+        return 0.0f;
+    float h;
+    if(mx ==r)
+        h = 60.0f * (g - b)/d;
+    else if(mx ==g)
+        h = 60.0f * ((b - r)/ d + 2);
+    else
+        h = 60 * ((r - g) / d + 4);
+    if(h < 0.0f) 
+        h = h + 360.0f;
+    return h;
+}
+
+// The HSL panel has 8 colour bands. A hue between two bands is shared by
+// both: `first` and `second` are the band numbers (0..7), `t` (0..1) is how
+// far the hue is from `first` towards `second`.
+struct HueBands {
+    int first;
+    int second;
+    float t;
+};
+
+inline HueBands hueBands(float hue) {
+    // Angle of each band; the last 360 is red again, closing the circle.
+    constexpr float kAngles[9] = {0, 30, 60, 120, 180, 240, 270, 300, 360};
+
+    for (int i = 0; i < 8; ++i) {
+        if (hue < kAngles[i + 1]){              
+            HueBands result;
+            result.first = i;
+            result.second =  (i + 1) % 8;         
+            result.t = (hue - kAngles[i]) / (kAngles[i + 1] - kAngles[i]);              
+            return result;
+        }
+    }
+    return {0, 1, 0.0f};       
+}
+
 } // namespace svitlo::color
