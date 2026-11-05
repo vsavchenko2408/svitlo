@@ -85,4 +85,35 @@ inline HueBands hueBands(float hue) {
 inline float mixBands(const std::array<float, 8>& values, const HueBands& bands) {
     return lerp(values[bands.first],values[bands.second], bands.t);
 }
+
+// Applies the colour mixer to one pixel (linear RGB). `sat` and `lum` are
+// the 8 saturation and 8 luminance sliders (-100..100). Hue comes later.
+inline void applyHsl(float& r, float& g, float& b,
+    const std::array<float, 8>& sat,
+    const std::array<float, 8>& lum) {
+const float mx = std::max({r, g, b});
+const float mn = std::min({r, g, b});
+if (mx <= 0.0f)
+return;                                    // black: nothing to change
+
+const float chroma = (mx - mn) / mx;           // 0 = grey, 1 = pure colour
+const float strength = smoothstep(0.0f, 0.25f, chroma); // greys stay as they are
+
+const HueBands bands = hueBands(hueOf(r, g, b));
+const float ds = mixBands(sat, bands) / 100.0f * strength;   // -1..1
+const float dl = mixBands(lum,bands) / 100.f * strength;                          
+
+// Saturation: move each channel away from grey (or towards it).
+const float y = luminance(r, g, b);
+const float f = 1.0f + ds;
+r = y + (r - y) * f;
+g = y + (g - y) * f;
+b = y + (b - y) * f;
+
+// Luminance: up to twice as bright or half as bright.
+const float m = std::exp2(dl);
+r *= m;
+g *= m;
+b *= m;
+}
 } // namespace svitlo::color
