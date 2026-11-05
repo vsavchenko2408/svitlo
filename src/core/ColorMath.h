@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <array>
 
 // Small, header-only colour helpers shared by the pipeline and the loader.
 namespace svitlo::color {
@@ -79,4 +80,9 @@ inline HueBands hueBands(float hue) {
     return {0, 1, 0.0f};       
 }
 
+// Value of one kind of HSL slider (e.g. saturation) for a hue that lies
+// between two bands: a blend of the two neighbouring sliders.
+inline float mixBands(const std::array<float, 8>& values, const HueBands& bands) {
+    return lerp(values[bands.first],values[bands.second], bands.t);
+}
 } // namespace svitlo::color
