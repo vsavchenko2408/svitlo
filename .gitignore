@@ -9,3 +9,6 @@ cmake-build-*/
 dist/
 .qtcreator/
 CMakeLists.txt.user*
+
+test_hue
+test_hue.cpp
