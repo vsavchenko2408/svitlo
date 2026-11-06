@@ -9,7 +9,7 @@ if(CMAKE_HOST_APPLE AND NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version")
 endif()
 
-project(Svitlo VERSION 0.3.0 LANGUAGES CXX)
+project(Svitlo VERSION 0.4.0 LANGUAGES CXX)
 if(APPLE)
     # One small Objective-C++ file (src/ui/MacAppearance.mm) for the window appearance.
     enable_language(OBJCXX)

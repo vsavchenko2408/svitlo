@@ -36,7 +36,7 @@
 <context>
     <name>svitlo::AdjustPanel</name>
     <message>
-        <location filename="../src/ui/AdjustPanel.cpp" line="+41" />
+        <location filename="../src/ui/AdjustPanel.cpp" line="+55" />
         <source>Light &amp; Colour</source>
         <translation>Licht &amp; Farbe</translation>
     </message>
@@ -122,11 +122,12 @@
     </message>
     <message>
         <location line="+1" />
+        <location line="+38" />
         <source>Saturation</source>
         <translation>Sättigung</translation>
     </message>
     <message>
-        <location line="+3" />
+        <location line="-35" />
         <source>Black &amp;&amp; white</source>
         <translation>Schwarzweiß</translation>
     </message>
@@ -142,6 +143,61 @@
     </message>
     <message>
         <location line="+16" />
+        <source>Colour Mixer</source>
+        <translation>Farbmischer</translation>
+    </message>
+    <message>
+        <location line="+6" />
+        <source>Hue</source>
+        <translation>Farbton</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Luminance</source>
+        <translation>Luminanz</translation>
+    </message>
+    <message>
+        <location line="+12" />
+        <source>Red</source>
+        <translation>Rot</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Orange</source>
+        <translation>Orange</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Yellow</source>
+        <translation>Gelb</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Green</source>
+        <translation>Grün</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Aqua</source>
+        <translation>Aquamarin</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Blue</source>
+        <translation>Blau</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Purple</source>
+        <translation>Lila</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Magenta</source>
+        <translation>Magenta</translation>
+    </message>
+    <message>
+        <location line="+17" />
         <source>Crop &amp; Straighten</source>
         <translation>Freistellen &amp; Ausrichten</translation>
     </message>

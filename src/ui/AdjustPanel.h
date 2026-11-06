@@ -5,6 +5,9 @@
 
 #include <QWidget>
 
+#include <array>
+
+class QButtonGroup;
 class QCheckBox;
 class QComboBox;
 class QVBoxLayout;
@@ -43,6 +46,9 @@ signals:
 private:
     SliderRow* addSlider(QVBoxLayout* layout, const QString& label, double min, double max,
                          double def, int decimals, double EditSettings::*field);
+    // Colour mixer: the 8 colour rows show hue (0), saturation (1) or
+    // luminance (2) sliders, switched with the buttons above them.
+    void showHslMode(int mode);
 
     EditSettings m_settings;
     QVector<QPair<SliderRow*, double EditSettings::*>> m_sliders;
@@ -52,6 +58,9 @@ private:
     QComboBox* m_aspect = nullptr;
     QComboBox* m_profile = nullptr;
     QWidget* m_profileRow = nullptr;
+    std::array<SliderRow*, 8> m_hslRows{};
+    QButtonGroup* m_hslModes = nullptr;
+    int m_hslMode = 0;
 };
 
 } // namespace svitlo

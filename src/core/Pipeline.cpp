@@ -7,6 +7,7 @@
 #include <QtConcurrent/QtConcurrentMap>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <numeric>
 #include <vector>
@@ -241,6 +242,17 @@ QImage Pipeline::render(const ImageBuffer& source, const EditSettings& s, const 
     const float vigStart = 0.15f + 0.9f * float(s.vignetteMidpoint / 100.0);
     const bool mono = s.monochrome;
 
+    // Colour mixer (HSL) sliders as floats; skipped entirely while all are 0.
+    std::array<float, 8> hslHue{}, hslSat{}, hslLum{};
+    bool hueActive = false, hslActive = false;
+    for (int i = 0; i < 8; ++i) {
+        hslHue[i] = float(s.hslHue[i]);
+        hslSat[i] = float(s.hslSaturation[i]);
+        hslLum[i] = float(s.hslLuminance[i]);
+        hueActive = hueActive || hslHue[i] != 0.0f;
+        hslActive = hslActive || hslHue[i] != 0.0f || hslSat[i] != 0.0f || hslLum[i] != 0.0f;
+    }
+
     std::vector<float> encoded(npix * 3);
     QtConcurrent::blockingMap(rows, [&](int y) {
         const float* p = img.row(y);
@@ -268,6 +280,21 @@ QImage Pipeline::render(const ImageBuffer& source, const EditSettings& s, const 
                 r *= k; g *= k; b *= k;
             } else {
                 r = g = b = y1;
+            }
+
+            // Colour mixer. Its colour bands are defined on the hues people
+            // see, so it works on gamma-encoded values (gamma 2: a square
+            // root and a square are much faster than pow and close enough).
+            // Before black & white, so the luminance sliders also act as a
+            // B&W colour mix.
+            if (hslActive) {
+                float pr = std::sqrt(r), pg = std::sqrt(g), pb = std::sqrt(b);
+                if (hueActive)
+                    shiftHue(pr, pg, pb, hslHue);
+                applyHsl(pr, pg, pb, hslSat, hslLum);
+                r = pr > 0.0f ? pr * pr : 0.0f;
+                g = pg > 0.0f ? pg * pg : 0.0f;
+                b = pb > 0.0f ? pb * pb : 0.0f;
             }
 
             // Vibrance boosts muted colours more than saturated ones.

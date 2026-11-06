@@ -36,7 +36,7 @@
 <context>
     <name>svitlo::AdjustPanel</name>
     <message>
-        <location filename="../src/ui/AdjustPanel.cpp" line="+41" />
+        <location filename="../src/ui/AdjustPanel.cpp" line="+55" />
         <source>Light &amp; Colour</source>
         <translation>Світло і колір</translation>
     </message>
@@ -122,11 +122,12 @@
     </message>
     <message>
         <location line="+1" />
+        <location line="+38" />
         <source>Saturation</source>
         <translation>Насиченість</translation>
     </message>
     <message>
-        <location line="+3" />
+        <location line="-35" />
         <source>Black &amp;&amp; white</source>
         <translation>Чорно-біле</translation>
     </message>
@@ -142,6 +143,61 @@
     </message>
     <message>
         <location line="+16" />
+        <source>Colour Mixer</source>
+        <translation>Змішувач кольорів</translation>
+    </message>
+    <message>
+        <location line="+6" />
+        <source>Hue</source>
+        <translation>Тон</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Luminance</source>
+        <translation>Яскравість</translation>
+    </message>
+    <message>
+        <location line="+12" />
+        <source>Red</source>
+        <translation>Червоний</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Orange</source>
+        <translation>Помаранчевий</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Yellow</source>
+        <translation>Жовтий</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Green</source>
+        <translation>Зелений</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Aqua</source>
+        <translation>Бірюзовий</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Blue</source>
+        <translation>Синій</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Purple</source>
+        <translation>Фіолетовий</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Magenta</source>
+        <translation>Пурпуровий</translation>
+    </message>
+    <message>
+        <location line="+17" />
         <source>Crop &amp; Straighten</source>
         <translation>Кадрування й вирівнювання</translation>
     </message>

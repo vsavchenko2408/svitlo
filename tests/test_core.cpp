@@ -1,6 +1,7 @@
 // Core tests: run without a display (QT_QPA_PLATFORM=offscreen).
 // Plain asserts keep the project free of a test-framework dependency.
 
+#include "core/ColorMath.h"
 #include "core/EditSettings.h"
 #include "core/Exporter.h"
 #include "core/Geometry.h"
@@ -225,6 +226,76 @@ static void testBatchExportNames() {
     CHECK(QImage(dir.filePath("out/other.png")).size() == QSize(10, 10)); // not overwritten
 }
 
+static void testColourMixer() {
+    using namespace svitlo::color;
+    // Vi's helpers (the same checks as his test_hue.cpp).
+    CHECK(hueOf(1, 0, 0) == 0.0f && hueOf(1, 1, 0) == 60.0f && hueOf(0, 0, 1) == 240.0f);
+    CHECK(hueOf(1, 0, 1) == 300.0f && hueOf(0.5f, 0.5f, 0.5f) == 0.0f);
+    const HueBands b45 = hueBands(45), b330 = hueBands(330);
+    CHECK(b45.first == 1 && b45.second == 2 && std::abs(b45.t - 0.5f) < 1e-6f);
+    CHECK(b330.first == 7 && b330.second == 0 && std::abs(b330.t - 0.5f) < 1e-6f);
+    std::array<float, 8> sat{};
+    sat[1] = 40;
+    CHECK(std::abs(mixBands(sat, hueBands(45)) - 20.0f) < 1e-5f);
+
+    // A hue shift keeps brightness and moves the hue the right way.
+    std::array<float, 8> hue{};
+    hue[1] = 100; // orange towards yellow
+    float r = 0.8f, g = 0.6f, b = 0.4f;
+    const float y0 = luminance(r, g, b);
+    shiftHue(r, g, b, hue);
+    CHECK(std::abs(luminance(r, g, b) - y0) < 1e-5f);
+    CHECK(hueOf(r, g, b) > 50.0f && hueOf(r, g, b) < 62.0f); // 30 + up to 30 degrees
+
+    // Whole pipeline: orange, blue and grey patches.
+    QImage patches(48, 8, QImage::Format_RGB888);
+    for (int y = 0; y < 8; ++y)
+        for (int x = 0; x < 48; ++x)
+            patches.setPixel(x, y, x < 16 ? qRgb(220, 130, 40) : x < 32 ? qRgb(40, 80, 200)
+                                                                     : qRgb(128, 128, 128));
+    const ImageBuffer buf = ImageLoader::fromQImage(patches);
+    const QImage plain = Pipeline::render(buf, EditSettings{});
+    auto spread = [](QRgb c) { // 0 for grey, larger for stronger colour
+        return std::max({qRed(c), qGreen(c), qBlue(c)}) - std::min({qRed(c), qGreen(c), qBlue(c)});
+    };
+    auto same = [](QRgb a, QRgb b) {
+        return std::abs(qRed(a) - qRed(b)) <= 1 && std::abs(qGreen(a) - qGreen(b)) <= 1 &&
+               std::abs(qBlue(a) - qBlue(b)) <= 1;
+    };
+
+    EditSettings desat;
+    desat.hslSaturation[1] = -100; // orange -> grey
+    const QImage d = Pipeline::render(buf, desat);
+    CHECK(spread(d.pixel(8, 4)) < 20); // was ~180: now almost grey (hue ~28°, a bit of red band)
+    CHECK(same(d.pixel(24, 4), plain.pixel(24, 4))); // blue untouched
+    CHECK(same(d.pixel(40, 4), plain.pixel(40, 4))); // grey untouched
+
+    EditSettings darkBlue;
+    darkBlue.hslLuminance[5] = -100;
+    const QImage l = Pipeline::render(buf, darkBlue);
+    CHECK(qGray(l.pixel(24, 4)) < qGray(plain.pixel(24, 4)) - 10);
+    CHECK(same(l.pixel(8, 4), plain.pixel(8, 4)));   // orange untouched
+
+    EditSettings warmer;
+    warmer.hslHue[1] = 100;
+    const QImage h = Pipeline::render(buf, warmer);
+    const QRgb o0 = plain.pixel(8, 4), o1 = h.pixel(8, 4);
+    CHECK(hueOf(qRed(o1), qGreen(o1), qBlue(o1)) > hueOf(qRed(o0), qGreen(o0), qBlue(o0)) + 5);
+    CHECK(same(h.pixel(40, 4), plain.pixel(40, 4)));
+
+    // Black & white: the luminance sliders act as a colour filter.
+    EditSettings bw;
+    bw.monochrome = true;
+    EditSettings bwDarkBlue = bw;
+    bwDarkBlue.hslLuminance[5] = -100;
+    CHECK(qGray(Pipeline::render(buf, bwDarkBlue).pixel(24, 4)) <
+          qGray(Pipeline::render(buf, bw).pixel(24, 4)) - 10);
+
+    // Saved with the edit.
+    CHECK(EditSettings::fromJsonString(warmer.toJsonString()) == warmer);
+    CHECK(!warmer.isIdentity());
+}
+
 static void testRawBaseLook() {
     // Left half dark grey, right half light grey.
     QImage greys(64, 8, QImage::Format_RGB888);
@@ -299,6 +370,7 @@ int main(int argc, char** argv) {
     testExport();
     testBatchExportNames();
     testRawBaseLook();
+    testColourMixer();
     testUpdateInfo();
     if (g_failures) {
         std::fprintf(stderr, "%d check(s) failed\n", g_failures);

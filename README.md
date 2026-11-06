@@ -37,6 +37,7 @@
 - RAW profiles: *Standard* (gentle contrast and colour, close to a camera JPEG) or *Neutral* (flat, linear)
 - White balance (temperature, tint), exposure, contrast, highlights, shadows, whites, blacks
 - Clarity, vibrance, saturation, black & white
+- Colour mixer (HSL): hue, saturation and luminance for 8 colour ranges; in black & white the luminance sliders work as a colour filter
 - Tone curve with smooth, monotone interpolation
 - Crop with aspect ratios, straighten with automatic frame fitting, 90° rotation
 - Sharpening and vignette
@@ -175,7 +176,7 @@ python3 translations/fill_translations.py          # fill them from the table in
 
 ## Roadmap
 
-- HSL colour mixer and split toning
+- Split toning
 - Local adjustments (graduated filter, brush)
 - Lens correction (lensfun) and noise reduction
 - Full-resolution 100% view, EXIF copying on export
@@ -189,7 +190,8 @@ I want to be upfront about this: **most of Svitlo's code was written by an AI as
 My part so far:
 - the idea, the requirements and the decisions: what to build, which platforms and languages to support, what to change;
 - building and testing on real hardware: several Intel Macs (Monterey, Sonoma, Sequoia), Windows, and my own RAW files;
-- finding and reporting bugs, fixing build problems, setting up the releases and the CI pipeline, and publishing the project.
+- finding and reporting bugs, fixing build problems, setting up the releases and the CI pipeline, and publishing the project;
+- **code I wrote myself:** the core of the HSL colour mixer (v0.4.0) — saving its settings, finding a pixel's hue and colour range, blending the sliders and changing saturation and luminance (`EditSettings`, `hueOf`, `hueBands`, `mixBands`, `applyHsl` in `src/core/ColorMath.h`). I wrote it step by step with an AI tutor explaining each part; the AI added the hue shift, the sliders and the wiring into the pipeline.
 
 I'm a self-taught C++ developer, and I use Svitlo to learn: reading and understanding the code, and writing new features myself. From here on, the commit history should show more and more of my own work.
 

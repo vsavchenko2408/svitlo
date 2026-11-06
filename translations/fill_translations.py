@@ -458,6 +458,18 @@ T = {
         da=["Fjernede %n foto fra kataloget", "Fjernede %n fotos fra kataloget"],
         de=["%n Foto aus dem Katalog entfernt", "%n Fotos aus dem Katalog entfernt"],
         pl=["Usunięto %n zdjęcie z katalogu", "Usunięto %n zdjęcia z katalogu", "Usunięto %n zdjęć z katalogu"]),
+    # --- 0.4.0: colour mixer (HSL) ----------------------------------------------------
+    "Colour Mixer": dict(uk="Змішувач кольорів", da="Farvemixer", de="Farbmischer", pl="Mikser kolorów"),
+    "Hue": dict(uk="Тон", da="Nuance", de="Farbton", pl="Barwa"),
+    "Luminance": dict(uk="Яскравість", da="Luminans", de="Luminanz", pl="Luminancja"),
+    "Red": dict(uk="Червоний", da="Rød", de="Rot", pl="Czerwony"),
+    "Orange": dict(uk="Помаранчевий", da="Orange", de="Orange", pl="Pomarańczowy"),
+    "Yellow": dict(uk="Жовтий", da="Gul", de="Gelb", pl="Żółty"),
+    "Green": dict(uk="Зелений", da="Grøn", de="Grün", pl="Zielony"),
+    "Aqua": dict(uk="Бірюзовий", da="Akva", de="Aquamarin", pl="Akwamaryna"),
+    "Blue": dict(uk="Синій", da="Blå", de="Blau", pl="Niebieski"),
+    "Purple": dict(uk="Фіолетовий", da="Lilla", de="Lila", pl="Fioletowy"),
+    "Magenta": dict(uk="Пурпуровий", da="Magenta", de="Magenta", pl="Purpurowy"),
 }
 
 PLURAL_FORMS = {"uk": 3, "pl": 3, "da": 2, "de": 2}

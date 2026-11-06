@@ -1,8 +1,8 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
 #include <array>
+#include <cmath>
 
 // Small, header-only colour helpers shared by the pipeline and the loader.
 namespace svitlo::color {
@@ -34,23 +34,28 @@ inline float linearToSrgb(float v) {
     return v <= 0.0031308f ? v * 12.92f : 1.055f * std::pow(v, 1.0f / 2.4f) - 0.055f;
 }
 
+// ---- Colour mixer (HSL) ------------------------------------------------------
+// hueOf, hueBands, mixBands and applyHsl were written by Vi (only whitespace
+// was tidied); shiftHue and rgbFromHue were added when wiring it into the
+// pipeline.
+
 // Hue of a colour in degrees, 0..360 (0 = red, 120 = green, 240 = blue).
 // Grey has no hue: returns 0.
 inline float hueOf(float r, float g, float b) {
-    const float mx = std::max({r,g,b});
-    const float mn = std::min({r,g,b});
+    const float mx = std::max({r, g, b});
+    const float mn = std::min({r, g, b});
     const float d = mx - mn;
 
-    if(d <= 0.0f)
+    if (d <= 0.0f)
         return 0.0f;
     float h;
-    if(mx ==r)
-        h = 60.0f * (g - b)/d;
-    else if(mx ==g)
-        h = 60.0f * ((b - r)/ d + 2);
+    if (mx == r)
+        h = 60.0f * (g - b) / d;
+    else if (mx == g)
+        h = 60.0f * ((b - r) / d + 2);
     else
-        h = 60 * ((r - g) / d + 4);
-    if(h < 0.0f) 
+        h = 60.0f * ((r - g) / d + 4);
+    if (h < 0.0f)
         h = h + 360.0f;
     return h;
 }
@@ -69,51 +74,99 @@ inline HueBands hueBands(float hue) {
     constexpr float kAngles[9] = {0, 30, 60, 120, 180, 240, 270, 300, 360};
 
     for (int i = 0; i < 8; ++i) {
-        if (hue < kAngles[i + 1]){              
+        if (hue < kAngles[i + 1]) {
             HueBands result;
             result.first = i;
-            result.second =  (i + 1) % 8;         
-            result.t = (hue - kAngles[i]) / (kAngles[i + 1] - kAngles[i]);              
+            result.second = (i + 1) % 8;
+            result.t = (hue - kAngles[i]) / (kAngles[i + 1] - kAngles[i]);
             return result;
         }
     }
-    return {0, 1, 0.0f};       
+    return {0, 1, 0.0f};
 }
 
 // Value of one kind of HSL slider (e.g. saturation) for a hue that lies
 // between two bands: a blend of the two neighbouring sliders.
 inline float mixBands(const std::array<float, 8>& values, const HueBands& bands) {
-    return lerp(values[bands.first],values[bands.second], bands.t);
+    return lerp(values[bands.first], values[bands.second], bands.t);
 }
 
-// Applies the colour mixer to one pixel (linear RGB). `sat` and `lum` are
-// the 8 saturation and 8 luminance sliders (-100..100). Hue comes later.
+// Applies the colour mixer to one pixel. `sat` and `lum` are the 8
+// saturation and 8 luminance sliders (-100..100); the hue sliders are
+// handled by shiftHue below.
 inline void applyHsl(float& r, float& g, float& b,
-    const std::array<float, 8>& sat,
-    const std::array<float, 8>& lum) {
-const float mx = std::max({r, g, b});
-const float mn = std::min({r, g, b});
-if (mx <= 0.0f)
-return;                                    // black: nothing to change
+                     const std::array<float, 8>& sat,
+                     const std::array<float, 8>& lum) {
+    const float mx = std::max({r, g, b});
+    const float mn = std::min({r, g, b});
+    if (mx <= 0.0f)
+        return;                                              // black: nothing to change
 
-const float chroma = (mx - mn) / mx;           // 0 = grey, 1 = pure colour
-const float strength = smoothstep(0.0f, 0.25f, chroma); // greys stay as they are
+    const float chroma = (mx - mn) / mx;                     // 0 = grey, 1 = pure colour
+    const float strength = smoothstep(0.0f, 0.25f, chroma); // greys stay as they are
 
-const HueBands bands = hueBands(hueOf(r, g, b));
-const float ds = mixBands(sat, bands) / 100.0f * strength;   // -1..1
-const float dl = mixBands(lum,bands) / 100.f * strength;                          
+    const HueBands bands = hueBands(hueOf(r, g, b));
+    const float ds = mixBands(sat, bands) / 100.0f * strength; // -1..1
+    const float dl = mixBands(lum, bands) / 100.0f * strength;
 
-// Saturation: move each channel away from grey (or towards it).
-const float y = luminance(r, g, b);
-const float f = 1.0f + ds;
-r = y + (r - y) * f;
-g = y + (g - y) * f;
-b = y + (b - y) * f;
+    // Saturation: move each channel away from grey (or towards it).
+    const float y = luminance(r, g, b);
+    const float f = 1.0f + ds;
+    r = y + (r - y) * f;
+    g = y + (g - y) * f;
+    b = y + (b - y) * f;
 
-// Luminance: up to twice as bright or half as bright.
-const float m = std::exp2(dl);
-r *= m;
-g *= m;
-b *= m;
+    // Luminance: up to twice as bright or half as bright.
+    const float m = std::exp2(dl);
+    r *= m;
+    g *= m;
+    b *= m;
 }
+
+// The colour with the given hue whose largest and smallest channels are `mx`
+// and `mn` (the reverse of hueOf for a fixed brightness and saturation).
+inline void rgbFromHue(float hue, float mx, float mn, float& r, float& g, float& b) {
+    const float x = hue / 60.0f;               // which sixth of the colour circle
+    const int sector = int(x) % 6;
+    const float f = x - std::floor(x);         // how far into that sixth
+    const float up = mn + (mx - mn) * f;       // channel rising in this sixth
+    const float down = mx - (mx - mn) * f;     // channel falling in this sixth
+    switch (sector) {
+    case 0: r = mx;   g = up;   b = mn;   break; // red -> yellow
+    case 1: r = down; g = mx;   b = mn;   break; // yellow -> green
+    case 2: r = mn;   g = mx;   b = up;   break; // green -> aqua
+    case 3: r = mn;   g = down; b = mx;   break; // aqua -> blue
+    case 4: r = up;   g = mn;   b = mx;   break; // blue -> magenta
+    default: r = mx;  g = mn;   b = down; break; // magenta -> red
+    }
+}
+
+// Largest hue shift of a hue slider at -100 / +100, in degrees.
+constexpr float kMaxHueShift = 30.0f;
+
+// Hue sliders of the colour mixer: turns each colour around the colour
+// circle by up to kMaxHueShift degrees, keeping its brightness.
+inline void shiftHue(float& r, float& g, float& b, const std::array<float, 8>& hue) {
+    const float mx = std::max({r, g, b});
+    const float mn = std::min({r, g, b});
+    if (mx <= 0.0f || mx - mn <= 0.0f)
+        return; // black or grey: no hue to turn
+
+    const float strength = smoothstep(0.0f, 0.25f, (mx - mn) / mx);
+    const float h = hueOf(r, g, b);
+    const float shift = mixBands(hue, hueBands(h)) / 100.0f * kMaxHueShift * strength;
+    if (shift == 0.0f)
+        return;
+
+    const float y0 = luminance(r, g, b);
+    rgbFromHue(std::fmod(h + shift + 360.0f, 360.0f), mx, mn, r, g, b);
+    const float y1 = luminance(r, g, b);
+    if (y1 > 1e-6f) {
+        const float k = y0 / y1; // same brightness as before the turn
+        r *= k;
+        g *= k;
+        b *= k;
+    }
+}
+
 } // namespace svitlo::color

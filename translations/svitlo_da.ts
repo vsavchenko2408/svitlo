@@ -36,7 +36,7 @@
 <context>
     <name>svitlo::AdjustPanel</name>
     <message>
-        <location filename="../src/ui/AdjustPanel.cpp" line="+41" />
+        <location filename="../src/ui/AdjustPanel.cpp" line="+55" />
         <source>Light &amp; Colour</source>
         <translation>Lys og farve</translation>
     </message>
@@ -122,11 +122,12 @@
     </message>
     <message>
         <location line="+1" />
+        <location line="+38" />
         <source>Saturation</source>
         <translation>Mætning</translation>
     </message>
     <message>
-        <location line="+3" />
+        <location line="-35" />
         <source>Black &amp;&amp; white</source>
         <translation>Sort-hvid</translation>
     </message>
@@ -142,6 +143,61 @@
     </message>
     <message>
         <location line="+16" />
+        <source>Colour Mixer</source>
+        <translation>Farvemixer</translation>
+    </message>
+    <message>
+        <location line="+6" />
+        <source>Hue</source>
+        <translation>Nuance</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Luminance</source>
+        <translation>Luminans</translation>
+    </message>
+    <message>
+        <location line="+12" />
+        <source>Red</source>
+        <translation>Rød</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Orange</source>
+        <translation>Orange</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Yellow</source>
+        <translation>Gul</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Green</source>
+        <translation>Grøn</translation>
+    </message>
+    <message>
+        <location line="+1" />
+        <source>Aqua</source>
+        <translation>Akva</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Blue</source>
+        <translation>Blå</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Purple</source>
+        <translation>Lilla</translation>
+    </message>
+    <message>
+        <location line="+0" />
+        <source>Magenta</source>
+        <translation>Magenta</translation>
+    </message>
+    <message>
+        <location line="+17" />
         <source>Crop &amp; Straighten</source>
         <translation>Beskær og ret ud</translation>
     </message>

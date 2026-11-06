@@ -5,16 +5,30 @@
 #include "ui/SliderRow.h"
 #include "ui/ToneCurveWidget.h"
 
+#include <QButtonGroup>
 #include <QCheckBox>
-#include <algorithm>
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QToolButton>
 #include <QVBoxLayout>
 
+#include <algorithm>
+
 namespace svitlo {
+
+namespace {
+
+// Hue angle of each colour mixer band (same order as EditSettings::hslHue).
+constexpr int kBandAngles[8] = {0, 30, 60, 120, 180, 240, 270, 300};
+
+std::array<double, 8>& hslValues(EditSettings& s, int mode) {
+    return mode == 0 ? s.hslHue : mode == 1 ? s.hslSaturation : s.hslLuminance;
+}
+
+} // namespace
 
 AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     setMinimumWidth(290);
@@ -112,6 +126,44 @@ AdjustPanel::AdjustPanel(QWidget* parent) : QWidget(parent) {
     });
     col->addWidget(curveSection);
 
+    // --- Colour mixer (HSL) ------------------------------------------------------
+    auto* mixer = new CollapsibleSection(tr("Colour Mixer"), false);
+    auto* mx = mixer->contentLayout();
+    auto* modeRow = new QHBoxLayout;
+    modeRow->setContentsMargins(0, 2, 0, 6);
+    modeRow->setSpacing(4);
+    m_hslModes = new QButtonGroup(this);
+    const QString modeNames[3] = {tr("Hue"), tr("Saturation"), tr("Luminance")};
+    for (int i = 0; i < 3; ++i) {
+        auto* button = new QToolButton;
+        button->setText(modeNames[i]);
+        button->setToolTip(modeNames[i]);
+        button->setCheckable(true);
+        // Long translations must not widen the panel.
+        button->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+        m_hslModes->addButton(button, i);
+        // Share the width by text length, so "Saturation" in e.g. Ukrainian
+        // still fits next to a short "Hue".
+        modeRow->addWidget(button, int(modeNames[i].size()) + 4);
+    }
+    mx->addLayout(modeRow);
+    const QString colourNames[8] = {tr("Red"),  tr("Orange"), tr("Yellow"), tr("Green"),
+                                    tr("Aqua"), tr("Blue"),   tr("Purple"), tr("Magenta")};
+    for (int i = 0; i < 8; ++i) {
+        auto* row = new SliderRow(colourNames[i], -100, 100, 0, 0);
+        mx->addWidget(row);
+        m_hslRows[i] = row;
+        connect(row, &SliderRow::valueChanged, this, [this, i](double v) {
+            hslValues(m_settings, m_hslMode)[i] = v;
+            emit settingsChanged(m_settings);
+        });
+        connect(row, &SliderRow::editingFinished, this, &AdjustPanel::editingFinished);
+    }
+    connect(m_hslModes, &QButtonGroup::idClicked, this, &AdjustPanel::showHslMode);
+    m_hslModes->button(0)->setChecked(true);
+    showHslMode(0);
+    col->addWidget(mixer);
+
     // --- Crop & rotate -----------------------------------------------------------
     auto* cropSection = new CollapsibleSection(tr("Crop & Straighten"));
     auto* c = cropSection->contentLayout();
@@ -184,11 +236,28 @@ SliderRow* AdjustPanel::addSlider(QVBoxLayout* layout, const QString& label, dou
     return row;
 }
 
+void AdjustPanel::showHslMode(int mode) {
+    m_hslMode = mode;
+    const std::array<double, 8>& values = hslValues(m_settings, mode);
+    for (int i = 0; i < 8; ++i) {
+        const int a = kBandAngles[i];
+        m_hslRows[i]->setValue(values[i]);
+        if (mode == 0) // the colour turns towards its neighbours
+            m_hslRows[i]->setTrackGradient(QColor::fromHsv((a + 360 - 30) % 360, 190, 225),
+                                           QColor::fromHsv((a + 30) % 360, 190, 225));
+        else if (mode == 1) // grey -> full colour
+            m_hslRows[i]->setTrackGradient(QColor::fromHsv(a, 0, 150), QColor::fromHsv(a, 230, 235));
+        else // dark -> light
+            m_hslRows[i]->setTrackGradient(QColor::fromHsv(a, 200, 70), QColor::fromHsv(a, 110, 255));
+    }
+}
+
 void AdjustPanel::setSettings(const EditSettings& s) {
     m_settings = s;
     for (const auto& [row, field] : m_sliders)
         row->setValue(s.*field);
     m_curve->setPoints(s.curve);
+    showHslMode(m_hslMode);
     const QSignalBlocker block(m_mono);
     m_mono->setChecked(s.monochrome);
     const QSignalBlocker blockProfile(m_profile);
